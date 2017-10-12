@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="../js/jquery-3.1.0.min.js"></script>  
+        <script type="text/javascript" src="../js/cookies.js"></script>
+        <link  rel="stylesheet" href="../css/estilosdivs.css">  
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        
+        <style>
+            #divID,#divNOMBRE,#divAPELLIDOS { cursor: pointer;}
+            #imgOID,#imgON,#imgOA {
+                display:inline-block;
+                width:16px;
+                height: 16px;                
+            }
+            .up {
+                background-image: url('arrow_up_blue.gif');
+            }
+            .down {
+                background-image: url('arrow_down_blue.gif');
+            }
+           #divGrid{
+               margin: 0 auto;
+               text-align: center;
+               margin-bottom: 15px;
+           }
+
+
+            #divBarra { text-align: center;
+                        margin: 0 auto;
+                        margin-top: 15px;
+                        }  
+            #divNuevo {
+                text-align: center;
+                margin: 0 auto;
+                border-radius: 10px 10px 10px 10px;
+                -moz-border-radius: 10px 10px 10px 10px;
+                -webkit-border-radius: 10px 10px 10px 10px;
+                border: 0px solid #000000;
+                background-color: #ebebeb;
+            }
+            tr,th{
+                text-align: center;
+            }
+            #divDatos{
+                margin:0 auto;
+                margin-top:15px;
+            }
+            header{
+                font-size: 40px;
+                margin:0 auto;
+                margin-top:15px;
+                text-align: center;
+                margin-bottom: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>Práctica Acceso a BBDD13</header>
+        <div class="container">
+        <div id="divNuevo"></div>
+        <div class="container" id="divGrid">
+            <div  id="divAccNuevo">
+                <a class="btn btn-primary" href="#" onclick="javascript:Nuevo()">Nuevo</a>
+                <a class="btn btn-primary" href="#" onclick="javascript:Editar()">Editar</a>
+                <a class="btn btn-primary" href="#" onclick="javascript:Borrar()">Borrar</a>
+                <input type="text" name="txtIdActual" id="txtIdActual" value=""/>
+            </div>    
+            <div class="container" id="divDatos"></div>
+            <div class="container" id="divBarra">
+                <a class="btn btn-primary" href="#" onclick="javascript:Primero()">Primero</a>
+                <a class="btn btn-primary" href="#" onclick="javascript:Anterior()">Anterior</a>
+                <a class="btn btn-primary" href="#" onclick="javascript:Siguiente()">Siguiente</a>
+                <a class="btn btn-primary" href="#" onclick="javascript:Ultimo()">Ultimo</a>
+            </div>
+        </div>
+        </div>
+    </body>
+    <script>
+        $(document).ready(function () {
+            docCookies.setItem("campo", "I");
+            docCookies.setItem("orden", "A");
+            if (!docCookies.hasItem("paginaAct")) {
+                docCookies.setItem("paginaAct", "1", Infinity);
+            }
+            $.ajax({type: "POST",
+                url: "configuraAcceso13.php",
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    docCookies.setItem("nTotalReg", respuesta.nTotalReg);
+                    docCookies.setItem("nTotalPag", respuesta.nTotalPag);
+                }
+            });
+            llenarAcceso13();
+        });
+        function Nuevo() {
+            var campo = docCookies.getItem("campo");
+            var orden = docCookies.getItem("orden");
+            $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: {"accion": "crearform", "campo": campo, "orden": orden},
+                success: function (data) {
+                    console.log(data);
+                    var respuesta = $.parseJSON(data);
+                    $("#divNuevo").html(respuesta.html);
+                }
+            });
+            toggleForm();
+        }
+        function Editar() {
+            var respuesta;
+            $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: {"accion": "editarEmp", "idEmp": $("#txtIdActual").val()},
+                success: function (data) {
+                   var respuesta = $.parseJSON(data);
+                   console.log(data);
+                    $("#divNuevo").html(respuesta.html);
+                }
+            });
+        
+                toggleForm();
+            
+         
+        }
+        function Borrar() {
+            $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: {"accion": "borrarEmp", "idEmp": $("#txtIdActual").val()},
+                success: function (data) {
+                    console.log(data)
+                    $("#" + $("#txtIdActual").val()).remove();
+                }
+            });
+            toggleForm();
+        }
+        function cancelarAccion() {
+            $("#divNuevo").html('');
+            toggleForm();
+        }
+        function doAccion(accion) {
+            
+            $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: $("#frmEmpleados").serialize() + "&accion=" + accion,
+                success: function (data) {
+                  var respuesta = $.parseJSON(data);
+                  console.log(respuesta);
+                    $("#divNuevo").html(respuesta.html);
+                    $("#txtIdActual").val("");
+                    toggleForm();
+                   // docCookies.setItem("paginaAct", respuesta.pagina + 1);
+                    llenarAcceso13();
+
+                }
+            });
+        }
+        function toggleForm() {
+            if ($("#divGrid").is(':visible')) {
+                $("#divGrid").hide('slow');
+            } else {
+                $("#divGrid").show('slow');
+            }
+        }
+        function Primero() {
+            docCookies.setItem("paginaAct", "1");
+            llenarAcceso13();
+        }
+        function Anterior() {
+            var pagAct = parseInt(docCookies.getItem("paginaAct"));
+            var nTotalPag = parseInt(docCookies.getItem("nTotalPag"));
+            pagAct--;
+            if (pagAct < 1) {
+                pagAct = 1;
+            }
+            docCookies.setItem("paginaAct", pagAct);
+            llenarAcceso13();
+        }
+        function Siguiente() {
+            var pagAct = parseInt(docCookies.getItem("paginaAct"));
+            var nTotalPag = parseInt(docCookies.getItem("nTotalPag"));
+            pagAct++;
+            if (pagAct > nTotalPag) {
+                pagAct = nTotalPag;
+            }
+            docCookies.setItem("paginaAct", pagAct);
+            llenarAcceso13();
+        }
+        function Ultimo() {
+            var nTotalPag = parseInt(docCookies.getItem("nTotalPag"));
+            docCookies.setItem("paginaAct", nTotalPag);
+            llenarAcceso13();
+        }
+        function Progreso() {
+           // $("#divDatos").html("<img src='ajax-loader.gif'> Cargando datos...");
+        }
+        function llenarAcceso13() {
+            var campo = docCookies.getItem("campo");
+            var orden = docCookies.getItem("orden");
+            var paginaAct = docCookies.getItem("paginaAct");
+            Progreso();
+            $.ajax({type: "POST",
+                data: {"campo": campo, "orden": orden, "paginaAct": paginaAct},
+                url: "llenarAcceso13.php",
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    $("#divDatos").html(respuesta.html);
+                }
+            });
+        }
+        $("body").on("click", "#divID",
+                function () {
+                    var orden = docCookies.getItem("orden");
+                    if (orden == 'A') {
+                        docCookies.setItem("orden", "D");
+                    } else {
+                        docCookies.setItem("orden", "A");
+                    }
+                    docCookies.setItem("campo", "I");
+                    llenarAcceso13();
+                });
+        $("body").on("click", "#divNOMBRE",
+                function () {
+                    var orden = docCookies.getItem("orden");
+                    if (orden == 'A') {
+                        docCookies.setItem("orden", "D");
+                    } else {
+                        docCookies.setItem("orden", "A");
+                    }
+                    docCookies.setItem("campo", "N");
+                    llenarAcceso13();
+                });
+        $("body").on("click", "#divAPELLIDOS",
+                function () {
+                    var orden = docCookies.getItem("orden");
+                    if (orden == 'A') {
+                        docCookies.setItem("orden", "D");
+                    } else {
+                        docCookies.setItem("orden", "A");
+                    }
+                    docCookies.setItem("campo", "A");
+                    llenarAcceso13();
+                });
+        function guardaID(id) {
+            $("#txtIdActual").val(id);
+        }
+    </script>
+</html>

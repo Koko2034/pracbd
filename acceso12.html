@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="../js/jquery-3.1.0.min.js"></script>  
+        <script type="text/javascript" src="../js/cookies.js"></script>
+        <link  rel="stylesheet" href="../css/estilosdivs.css">        
+        <style>
+            #divID,#divNOMBRE,#divAPELLIDOS { cursor: pointer;}
+            #imgOID,#imgON,#imgOA {
+                display:inline-block;
+                width:16px;
+                height: 16px;                
+            }
+            .up {
+                background-image: url('arrow_up_blue.gif');
+            }
+            .down {
+                background-image: url('arrow_down_blue.gif');
+            }
+        </style>
+    </head>
+    <body>  
+        <div id="divDatos"></div>
+        <div id="divBarra">
+            <a href="#" onclick="javascript:Primero()">Primero</a>
+            <a href="#" onclick="javascript:Anterior()">Anterior</a>
+            <a href="#" onclick="javascript:Siguiente()">Siguiente</a>
+            <a href="#" onclick="javascript:Ultimo()">Ultimo</a>
+        </div>
+    </body>
+    <script>
+        $(document).ready(function () {
+            docCookies.setItem("campo", "A");
+            docCookies.setItem("orden", "A");
+            if (!docCookies.hasItem("paginaAct")) {
+                docCookies.setItem("paginaAct", "1", Infinity);
+            }
+            $.ajax({type: "POST",
+                url: "configuraAcceso12.php",
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    console.log(data);
+                    docCookies.setItem("nTotalReg", respuesta.nTotalReg);
+                    docCookies.setItem("nTotalPag", respuesta.nTotalPag);
+                }
+            });
+             llenarAcceso12(); 
+        });
+
+        function Primero() {
+            docCookies.setItem("paginaAct", "1");
+            llenarAcceso12();
+        }
+        function Anterior() {
+            var pagAct = parseInt(docCookies.getItem("paginaAct"));
+            var nTotalPag = parseInt(docCookies.getItem("nTotalPag"));
+            pagAct--;
+            if (pagAct < 1) {
+                pagAct = 1;
+            }
+            docCookies.setItem("paginaAct", pagAct);
+            llenarAcceso12();
+        }
+        function Siguiente() {
+            var pagAct = parseInt(docCookies.getItem("paginaAct"));
+            var nTotalPag = parseInt(docCookies.getItem("nTotalPag"));
+            pagAct++;
+            if (pagAct > nTotalPag) {
+                pagAct = nTotalPag;
+            }
+            docCookies.setItem("paginaAct", pagAct);
+            llenarAcceso12();
+        }
+        function Ultimo() {
+            var nTotalPag = parseInt(docCookies.getItem("nTotalPag"));
+            docCookies.setItem("paginaAct", nTotalPag);
+            llenarAcceso12();
+        }
+        function Progreso() {
+           // $("#divDatos").html("<img src='ajax-loader.gif'> Cargando datos...");
+        }
+        function llenarAcceso12() {
+            var campo = docCookies.getItem("campo");
+            var orden = docCookies.getItem("orden");
+            var paginaAct = docCookies.getItem("paginaAct");
+            Progreso();
+            $.ajax({type: "POST",
+                data: {"campo": campo, "orden": orden, "paginaAct": paginaAct},
+                url: "llenarAcceso12.php",
+                success: function (data) {
+                    console.log(data);
+                    var respuesta = $.parseJSON(data);
+                    $("#divDatos").html(respuesta.html);
+                    console.log(respuesta.debug);
+                }
+            });
+            
+        }
+        $("body").on("click", "#divID",
+                function () {
+                    var orden = docCookies.getItem("orden");
+                    if (orden == 'A') {
+                        docCookies.setItem("orden", "D");
+                    } else {
+                        docCookies.setItem("orden", "A");
+                    }
+                    docCookies.setItem("campo", "I");
+                    llenarAcceso12();
+                });
+        $("body").on("click", "#divNOMBRE",
+                function () {
+                    var orden = docCookies.getItem("orden");
+                    if (orden == 'A') {
+                        docCookies.setItem("orden", "D");
+                    } else {
+                        docCookies.setItem("orden", "A");
+                    }
+                    docCookies.setItem("campo", "N");
+                    llenarAcceso12();
+                });
+        $("body").on("click", "#divAPELLIDOS",
+                function () {
+                    var orden = docCookies.getItem("orden");
+                    if (orden == 'A') {
+                        docCookies.setItem("orden", "D");
+                    } else {
+                        docCookies.setItem("orden", "A");
+                    }
+                    docCookies.setItem("campo", "A");
+                    llenarAcceso12();
+                });
+    </script>
+
+</html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="../js/jquery-3.1.0.min.js"></script>  
+        <script type="text/javascript" src="../js/cookies.js"></script>
+        <link  rel="stylesheet" href="../css/estilosdivs.css">  
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        
+        <style>
+            html,body{
+                width: 100%;
+                background-color: #247C90;
+            }
+           /* #divID,#divNOMBRE,#divAPELLIDOS { cursor: pointer;}
+            #imgOID,#imgON,#imgOA {
+                display:inline-block;
+                width:16px;
+                height: 16px;                
+            }
+            .up {
+                background-image: url('arrow_up_blue.gif');
+            }
+            .down {
+                background-image: url('arrow_down_blue.gif');
+            }
+           #divGrid{
+               margin: 0 auto;
+               text-align: center;
+               margin-bottom: 15px;
+           }
+
+
+            #divBarra { text-align: center;
+                        margin: 0 auto;
+                        margin-top: 15px;
+                        }  
+            #divNuevo {
+                text-align: center;
+                margin: 0 auto;
+                border-radius: 10px 10px 10px 10px;
+                -moz-border-radius: 10px 10px 10px 10px;
+                -webkit-border-radius: 10px 10px 10px 10px;
+                border: 0px solid #000000;
+                background-color: #ebebeb;
+            }
+            tr,th{
+                text-align: center;
+            }
+            #divDatos{
+                margin:0 auto;
+                margin-top:15px;
+            }*/
+            header{
+                width: 100%;
+                height: 5%;
+                font-size: 300%;
+                margin:0 auto;
+                margin-top:3%;
+                margin-bottom:3%;
+                text-align: center;
+            }
+            .divFormulario{
+                width: 100%;
+                height: 25%;
+                margin:0 auto;
+                text-align: center;
+            }
+            .divTable{
+                width: 80%;
+                height: 50%;
+                margin: 0 auto;  
+                text-align: center;
+                color:white;
+            }
+            tr,th{
+                text-align: center;
+            }
+            .contForm{
+                width: 30%;
+                height: 30%;
+                margin: 0 auto;
+                text-align: center;
+            }
+            input[type="text"] {  
+                text-align: center;
+            }
+            .selected{
+                background: orange;
+            }
+            #imgID,{
+                width: 15%;
+                height: 100%;
+            }
+            #imgNOMBRE{
+                height: 100%;
+                width: 5%;
+            }
+            #imgApellidos{
+                height: 100%;
+                width: 8%;
+            }
+        </style>
+    </head>
+    <body>
+        <header>Práctica Acceso a BBDD14</header>
+        <div class="divFormulario" id="divNuevo"></div>
+        <div id="divGrid">
+            <div class="divFormulario" id="divAccNuevo">
+                <a class="btn btn-warning" href="#" onclick="Create()">Nuevo</a>
+                <a class="btn btn-warning" href="#" onclick="Edit()">Editar</a>
+                <a class="btn btn-warning" href="#" onclick="Delete()">Borrar</a>
+                <input type="text" class="btn" name="txtIdActual" id="txtIdActual" value=""/>
+            </div>    
+            <div class="divTable" id="divDatos"></div>
+            <div class="divFormulario" id="divBarra">
+                <a class="btn btn-warning" href="#" onclick="changePage('Primera')">Primero</a>
+                <a class="btn btn-warning" href="#"  onclick="changePage('Anterior')">Anterior</a>
+                <input type="text" class="btn" disabled id="paginaAct">
+                <a class="btn btn-warning" href="#"  onclick="changePage('Siguiente')">Siguiente</a>
+                <a class="btn btn-warning" href="#" onclick="changePage('Ultima')">Ultimo</a>
+            </div>
+    </body>
+    <script>
+        var oRegistro = createObject();
+        $(document).ready(function () { 
+            $.ajax({type: "POST",
+                url: "configuraAcceso14.php",
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    oRegistro.nTotalReg =respuesta.nTotalReg;
+                    oRegistro.nTotalPag = respuesta.nTotalPag;
+                }
+            });
+            llenarAcceso14();
+        });
+        function llenarAcceso14() {
+            Progreso();
+            let data = JSON.stringify(oRegistro);
+            $.ajax({type: "POST",
+                data: {"data": data},
+                url: "llenarAcceso14.php",
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    $("#divDatos").html(respuesta.html);
+                    $('#paginaAct').val(oRegistro.paginaAct);
+                    }
+            });
+          
+        }
+        
+        function createObject(){
+            let datos = new Object();
+            datos.campo = "I";
+            datos.orden = "A";
+            datos.paginaAct = 1;
+            return datos;
+        }
+        function changePage(accion){
+            var pagAct = oRegistro.paginaAct;
+            var nTotalPag = oRegistro.nTotalPag;
+            if(accion==="Anterior"){
+                pagAct--;
+                if (pagAct < 1) {
+                    pagAct = 1;
+                }
+            }
+            if(accion==="Siguiente"){
+                pagAct++;
+                if (pagAct > nTotalPag) {
+                    pagAct = nTotalPag;
+                }
+            }
+            if(accion==="Primera"){
+                pagAct = 1;
+            }
+            if(accion==="Ultima"){
+                pagAct = oRegistro.nTotalPag;
+            }
+            oRegistro.paginaAct = pagAct;
+            llenarAcceso14();
+        }
+        function guardaID(id){
+            $("#txtIdActual").val(id);
+            $('.selected').removeClass('selected');
+            $('#'+id).addClass('selected');
+        }
+        function Progreso() {
+            $("#divDatos").html("<img src='ajax-loader.gif'> Cargando datos...");
+            } 
+        function Delete(){
+            oRegistro.accion = "Delete";
+            oRegistro.id = $("#txtIdActual").val();
+            let data = JSON.stringify(oRegistro);
+            $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: {"data": data
+                },
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    $("#divNuevo").html(respuesta.html);
+                    
+                }
+            });
+            toggleForm();
+        }
+        function toggleForm() {
+            if ($("#divGrid").is(':visible')) {
+                $("#divGrid").hide('slow');
+            } else {
+                $("#divGrid").show('slow');
+            }
+        }
+        function cancelarAccion() {
+            $("#divNuevo").html('');
+            $("#txtIdActual").val("");
+            toggleForm();
+            llenarAcceso14();
+        }
+        function confirmarAccion(){
+            if(oRegistro.accion==="Delete"){
+                oRegistro.accion = "confirmDelete";
+            }
+            if(oRegistro.accion==="update"){
+                oRegistro.accion="confirmUpdate";
+            }
+            if(oRegistro.accion==="createUser"){
+                oRegistro.accion="confirmCreate";
+            }
+            let data = JSON.stringify(oRegistro);
+            $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: {"data": data
+                },
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    if(respuesta.pag>0){
+                        oRegistro.paginaAct=respuesta.pag;
+                    }
+                    if(respuesta.pag===0){
+                        oRegistro.paginaAct=oRegistro.nTotalPag;
+                    }
+                    $("#txtIdActual").val("");
+                    $("#divNuevo").html(respuesta.html);     
+                }
+            });
+            toggleForm();
+            llenarAcceso14();
+        }
+        function Edit(){
+            oRegistro.accion= "Edit";
+            oRegistro.id = $("#txtIdActual").val();
+            let data = JSON.stringify(oRegistro);
+            $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: {"data": data
+                },
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    $("#divNuevo").html(respuesta.html);
+                    
+                }
+            });
+            toggleForm();
+        }
+        function doAccion(accion) {
+            if(id=$('#txtId').val()!=null){
+                oRegistro.id=$('#txtId').val();
+            }
+            oRegistro.nombre=$('#txtNombre').val();
+            oRegistro.apellidos=$('#txtApellidos').val();
+            if(accion==="confirm"){
+                oRegistro.accion="update";
+            }
+            if(accion==="Create"){
+                oRegistro.accion="createUser";
+            }
+            let data = JSON.stringify(oRegistro);
+            $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: {"data": data},
+                success: function (data) {
+                  var respuesta = $.parseJSON(data);
+                    $("#divNuevo").html(respuesta.html);
+
+                }
+            });
+            
+        }
+        function Create(){
+            oRegistro.accion= "Create";
+            let data = JSON.stringify(oRegistro);
+            $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: {"data": data
+                },
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    console.log(data);
+                    $("#divNuevo").html(respuesta.html);
+                    
+                }
+            });
+            toggleForm();
+        }
+
+        $("body").on("click", "#divID",
+                function () {
+                    if(oRegistro.campo==="I"){
+                        oRegistro.orden === "A" ? oRegistro.orden="D":oRegistro.orden="A";
+                    }
+                    oRegistro.campo="I";
+                    llenarAcceso14();
+                });
+        $("body").on("click", "#divNOMBRE",
+                function () {
+                    if(oRegistro.campo==="N"){
+                     
+                    oRegistro.orden === "A" ? oRegistro.orden="D":oRegistro.orden="A";
+                    }
+                    oRegistro.campo="N";
+                    llenarAcceso14();          
+                });
+        $("body").on("click", "#divAPELLIDOS",
+                function () {
+                    if(oRegistro.campo==="A"){
+                        oRegistro.orden === "A" ? oRegistro.orden="D":oRegistro.orden="A";
+                    }
+                    oRegistro.campo="A";
+                    llenarAcceso14();
+                   
+                });
+
+
+      /*
+        function Read() {
+            oRegistro.accion="Read";
+            oRegistro.id = $("#txtIdActual").val();
+            let data = JSON.stringify(oRegistro);
+            $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: {"data":data },
+                success: function (data) {
+                   var respuesta = $.parseJSON(data);
+                   $("#divNuevo").html(respuesta.html);
+                }
+            });
+                toggleForm();
+            
+         
+        }
+        function Delete() {
+            oRegistro.accion = "Delete";
+            oRegistro.id = $("#txtIdActual").val();
+            let data = JSON.stringify(oRegistro);
+            console.log(data)
+            $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: {"data": data
+                },
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    $("#divNuevo").html(respuesta.html);
+                    $("#" + $("#txtIdActual").val()).remove();
+                }
+            });
+            toggleForm();
+        }
+        function doAccion(accion) {
+            if(oRegistro.id=$('#txtId').val()!=null){
+                oRegistro.id=$('#txtId').val();
+            }
+            oRegistro.nombre=$('#txtNombre').val();
+            oRegistro.apellidos=$('#txtApellidos').val();
+            oRegistro.accion = accion;
+            let data = JSON.stringify(oRegistro);
+            $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: {"data": data},
+                success: function (data) {
+                  var respuesta = $.parseJSON(data);
+                    $("#divNuevo").html(respuesta.html);
+
+                }
+            });
+            
+        }
+       
+        function update(){
+            $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: {"data": data},
+                success: function (data) {
+                  var respuesta = $.parseJSON(data);
+                  console.log(respuesta);
+                    $("#divNuevo").html(respuesta.html);
+                    $("#txtIdActual").val("");
+                    toggleForm();
+                   // docCookies.setItem("paginaAct", respuesta.pagina + 1);
+                    llenarAcceso13();
+
+                }
+            });
+        }
+        
+        function cancelarAccion() {
+            if(oRegistro.accion==='confirm'){
+                oRegistro.accion="update";
+                let data = JSON.stringify(oRegistro);
+                $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: {"data": data},
+                success: function (data) {
+                }
+            });
+            }
+            $("#divNuevo").html('');
+            toggleForm();
+            llenarAcceso14();
+        }
+*/
+        
+        
+        
+          
+      
+        
+    </script>
+</html>
