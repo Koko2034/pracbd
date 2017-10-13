@@ -134,6 +134,9 @@ if($accion==="confirmCreate"){
     $nombre = $aux['nombre'];
     $apellidos = $aux['apellidos'];
     $status="";
+    $pag=0;
+    $campo= $aux['campo'];
+    $id= $aux['id'];
     $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
     $oConni->set_charset('utf8');
     $stmt = $oConni->prepare("INSERT INTO EMPLEADOS (NOMBRE,APELLIDOS) VALUES (?,?)");
@@ -141,6 +144,7 @@ if($accion==="confirmCreate"){
     if($stmt->execute()){
         $stmt->store_result();
         $status="ok";
+        $pag=calculatePag($id,$campo);
     }else{
         $html = $stmt->errno . " " . $stmt->error;
         $status = "KO";

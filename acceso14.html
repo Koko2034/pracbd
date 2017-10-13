@@ -143,6 +143,7 @@ and open the template in the editor.
         });
         function llenarAcceso14() {
             Progreso();
+            console.log(oRegistro.paginaAct);
             let data = JSON.stringify(oRegistro);
             $.ajax({type: "POST",
                 data: {"data": data},
@@ -246,10 +247,10 @@ and open the template in the editor.
                 success: function (data) {
                     var respuesta = $.parseJSON(data);
                     $("#divNuevo").html(respuesta.html);
-                    
+                    toggleForm();
                 }
             });
-            toggleForm();
+           
         }
         function toggleForm() {
             if ($("#divGrid").is(':visible')) {
@@ -281,6 +282,7 @@ and open the template in the editor.
                 },
                 success: function (data) {
                     var respuesta = $.parseJSON(data);
+                   console.log(respuesta.pag);
                     if(respuesta.pag>0){
                         oRegistro.paginaAct=respuesta.pag;
                     }
@@ -288,11 +290,12 @@ and open the template in the editor.
                         oRegistro.paginaAct=oRegistro.nTotalPag;
                     }
                     $("#txtIdActual").val("");
-                    $("#divNuevo").html(respuesta.html);     
+                    $("#divNuevo").html(respuesta.html);
+                    toggleForm();
+                    llenarAcceso14();     
                 }
             });
-            toggleForm();
-            llenarAcceso14();
+           
         }
         function Edit(){
             oRegistro.accion= "Edit";
@@ -305,10 +308,10 @@ and open the template in the editor.
                 success: function (data) {
                     var respuesta = $.parseJSON(data);
                     $("#divNuevo").html(respuesta.html);
-                    
+                    toggleForm();
                 }
             });
-            toggleForm();
+            
         }
         function doAccion(accion) {
             if(id=$('#txtId').val()!=null){
@@ -345,10 +348,10 @@ and open the template in the editor.
                     var respuesta = $.parseJSON(data);
                     console.log(data);
                     $("#divNuevo").html(respuesta.html);
-                    
+                    toggleForm();
                 }
             });
-            toggleForm();
+           
         }
 
         $("body").on("click", "#divID",
