@@ -76,13 +76,13 @@ function formCreate($id,$NomEmpleado,$ApeEmpleado){
         $html.='<input type="text" class="form-control" id="txtID" name="txtId" disabled value="'.$id.'"></div>';
     }
     $html.='<div class="form-group"><label for="txtNombre">Nombre</label>';
-    $html.='<input type="text" class="form-control" id="txtNombre" name="txtNombre" value="'.$NomEmpleado.'"></div>';
+    $html.='<input type="text" class="form-control" id="txtNombre" name="txtNombre" required onblur="controlText()" value="'.$NomEmpleado.'"></div>';
     $html.='<div class="form-group"><label for="txtApellidos">Apellidos</label>';
-    $html.='<input type="text" name="txtApellidos" class="form-control" id="txtApellidos" value="'.$ApeEmpleado.'"></div>'; 
+    $html.='<input type="text" name="txtApellidos" class="form-control" id="txtApellidos" required onblur="controlText()" value="'.$ApeEmpleado.'"></div>'; 
     if($id!=null){
-        $html.='<button type="button" class="btn btn-warning" id="butEnviar" onclick="doAccion(this.value)" value="confirm">Editar</button>';
+        $html.='<button type="button" class="btn btn-warning" id="butEnviar" disabled onclick="doAccion(this.value)" value="confirm">Editar</button>';
     }else{
-        $html.='<button type="button" class="btn btn-warning" id="butEnviar" onclick="doAccion(this.value)" value="Create">Guardar</button>';
+        $html.='<button type="button" class="btn btn-warning" id="butEnviar" disabled  onclick="doAccion(this.value)" value="Create">Guardar</button>';
     }
     $html.='<button type="button" class="btn btn-warning" id="butCancelar" onclick="cancelarAccion()">Cancelar</button></form>';
     return $html;
@@ -101,7 +101,8 @@ if($accion === "confirmUpdate"){
     $nombre = $aux['nombre'];
     $apellidos = $aux['apellidos'];
     $campo = $aux['campo'];
-    $campo = campo($campo);
+    $orden = $aux['orden'];
+    $campo = campo($campo,$orden);
     $pag;
     $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
     $oConni->set_charset('utf8');
@@ -135,7 +136,9 @@ if($accion==="confirmCreate"){
     $apellidos = $aux['apellidos'];
     $status="";
     $pag=0;
-    $campo= $aux['campo'];
+    $campo =$aux['campo'];
+    $orden = $aux['orden'];
+    $campo=campo( $campo,$orden);
     $id= $aux['id'];
     $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
     $oConni->set_charset('utf8');
@@ -151,15 +154,24 @@ if($accion==="confirmCreate"){
         }
     echo json_encode(array("status"=>$status,"html"=>$html,"pag"=>0));
 }
-function campo($campo){
-    if($campo==="N"){
-        $campo ="NOMBRE";
+function campo($campo,$orden){
+    if($campo==="N" && $orden==="A"){
+        $campo ="NOMBRE ASC";
     }
-    if($campo==="I"){
-        $campo="ID_EMPLEADO";
+    if($campo==="N" && $orden==="D"){
+        $campo ="NOMBRE DESC";
     }
-    if($campo==="A"){
-        $campo ="APELLIDOS";
+    if($campo==="I" && $orden==="A"){
+        $campo="ID_EMPLEADO ASC";
+    }
+    if($campo==="I" && $orden==="D"){
+        $campo="ID_EMPLEADO DESC";
+    }
+    if($campo==="A" && $orden==="A"){
+        $campo ="APELLIDOS ASC";
+    }
+    if($campo==="A" && $orden ==="D"){
+        $campo ="APELLIDOS DESC";
     }
     return $campo;
 }

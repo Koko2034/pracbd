@@ -141,6 +141,16 @@ and open the template in the editor.
             });
             llenarAcceso14();
         });
+        function controlText(){
+            let nombre = $("#txtNombre").val();
+            let apellidos = $("#txtApellidos").val();
+            if(nombre!="" && apellidos !=""){
+                $("#butEnviar").attr("disabled", false);
+                console.log("prueba")
+            }else{
+                $("#butEnviar").attr("disabled", true);
+            }
+        }
         function llenarAcceso14() {
             Progreso();
             console.log(oRegistro.paginaAct);
@@ -217,6 +227,7 @@ and open the template in the editor.
             });
         }
         function comprobarEdit(){
+            console.log("hola")
             oRegistro.id = $("#txtIdActual").val();
             oRegistro.accion = "comprobarEdit";
             let data = JSON.stringify(oRegistro);
@@ -230,6 +241,7 @@ and open the template in the editor.
                         Edit();
                     }else{
                         $("#divNuevo").html(respuesta.html);
+                        
                         toggleForm();
                     }
                     
@@ -239,7 +251,8 @@ and open the template in the editor.
         function Delete(){
             oRegistro.accion = "Delete";
             oRegistro.id = $("#txtIdActual").val();
-            let data = JSON.stringify(oRegistro);
+            petAjax();
+           /* let data = JSON.stringify(oRegistro);
             $.ajax({type: "POST",
                 url: "crudEmpleados.php",
                 data: {"data": data
@@ -249,7 +262,7 @@ and open the template in the editor.
                     $("#divNuevo").html(respuesta.html);
                     toggleForm();
                 }
-            });
+            });*/
            
         }
         function toggleForm() {
@@ -300,7 +313,8 @@ and open the template in the editor.
         function Edit(){
             oRegistro.accion= "Edit";
             oRegistro.id = $("#txtIdActual").val();
-            let data = JSON.stringify(oRegistro);
+            petAjax();
+           /* let data = JSON.stringify(oRegistro);
             $.ajax({type: "POST",
                 url: "crudEmpleados.php",
                 data: {"data": data
@@ -308,9 +322,10 @@ and open the template in the editor.
                 success: function (data) {
                     var respuesta = $.parseJSON(data);
                     $("#divNuevo").html(respuesta.html);
+                    controlText();
                     toggleForm();
                 }
-            });
+            });*/
             
         }
         function doAccion(accion) {
@@ -336,21 +351,23 @@ and open the template in the editor.
                 }
             });
             
+            
         }
         function Create(){
             oRegistro.accion= "Create";
-            let data = JSON.stringify(oRegistro);
+           /* let data = JSON.stringify(oRegistro);
             $.ajax({type: "POST",
                 url: "crudEmpleados.php",
                 data: {"data": data
                 },
                 success: function (data) {
                     var respuesta = $.parseJSON(data);
-                    console.log(data);
                     $("#divNuevo").html(respuesta.html);
                     toggleForm();
                 }
-            });
+            });*/
+
+            petAjax();
            
         }
 
@@ -380,30 +397,8 @@ and open the template in the editor.
                     llenarAcceso14();
                    
                 });
-
-
-      /*
-        function Read() {
-            oRegistro.accion="Read";
-            oRegistro.id = $("#txtIdActual").val();
+        function petAjax(){
             let data = JSON.stringify(oRegistro);
-            $.ajax({type: "POST",
-                url: "crudEmpleados.php",
-                data: {"data":data },
-                success: function (data) {
-                   var respuesta = $.parseJSON(data);
-                   $("#divNuevo").html(respuesta.html);
-                }
-            });
-                toggleForm();
-            
-         
-        }
-        function Delete() {
-            oRegistro.accion = "Delete";
-            oRegistro.id = $("#txtIdActual").val();
-            let data = JSON.stringify(oRegistro);
-            console.log(data)
             $.ajax({type: "POST",
                 url: "crudEmpleados.php",
                 data: {"data": data
@@ -411,69 +406,10 @@ and open the template in the editor.
                 success: function (data) {
                     var respuesta = $.parseJSON(data);
                     $("#divNuevo").html(respuesta.html);
-                    $("#" + $("#txtIdActual").val()).remove();
-                }
-            });
-            toggleForm();
-        }
-        function doAccion(accion) {
-            if(oRegistro.id=$('#txtId').val()!=null){
-                oRegistro.id=$('#txtId').val();
-            }
-            oRegistro.nombre=$('#txtNombre').val();
-            oRegistro.apellidos=$('#txtApellidos').val();
-            oRegistro.accion = accion;
-            let data = JSON.stringify(oRegistro);
-            $.ajax({type: "POST",
-                url: "crudEmpleados.php",
-                data: {"data": data},
-                success: function (data) {
-                  var respuesta = $.parseJSON(data);
-                    $("#divNuevo").html(respuesta.html);
-
-                }
-            });
-            
-        }
-       
-        function update(){
-            $.ajax({type: "POST",
-                url: "crudEmpleados.php",
-                data: {"data": data},
-                success: function (data) {
-                  var respuesta = $.parseJSON(data);
-                  console.log(respuesta);
-                    $("#divNuevo").html(respuesta.html);
-                    $("#txtIdActual").val("");
                     toggleForm();
-                   // docCookies.setItem("paginaAct", respuesta.pagina + 1);
-                    llenarAcceso13();
-
                 }
             });
         }
-        
-        function cancelarAccion() {
-            if(oRegistro.accion==='confirm'){
-                oRegistro.accion="update";
-                let data = JSON.stringify(oRegistro);
-                $.ajax({type: "POST",
-                url: "crudEmpleados.php",
-                data: {"data": data},
-                success: function (data) {
-                }
-            });
-            }
-            $("#divNuevo").html('');
-            toggleForm();
-            llenarAcceso14();
-        }
-*/
-        
-        
-        
-          
-      
-        
+  
     </script>
 </html>
