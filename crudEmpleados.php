@@ -20,7 +20,9 @@ function modalInfo($info,$accion){
     $html.= '<h3 class="modal-title">Informacion del '.$accion.'</h3></div>';
     $html.= '<div class="modal-body"><p>'.$info.'</p></div>';
     $html.= '<div class="modal-footer">';
-    $html.= '<button type="button" class="btn btn-warning" onclick=confirmarAccion()>Confirmar</button>';
+    if($accion!="comprobarDelete" & $accion!="comprobarEdit"){
+        $html.= '<button type="button" class="btn btn-warning" onclick=confirmarAccion()>Confirmar</button>';
+    }
     $html.= '<button type="button" class="btn btn-warning" onclick=cancelarAccion()>Atrás</button></div></div></div>';
     return json_encode(array("status"=>"ok","html"=>$html));
 }
@@ -173,6 +175,60 @@ function calculatePag($id,$campo){
         $status = "KO";
         }
    return $paginaAct;
+}
+if($accion==="comprobarDelete"){
+    $html;
+    $status="KO";
+    $id = $aux['id'];
+    $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
+    $oConni->set_charset('utf8');
+    $stmt = $oConni->prepare("SELECT NOMBRE,APELLIDOS FROM EMPLEADOS WHERE ID_EMPLEADO = ?");
+    $stmt->bind_param('i',$id);
+    if($stmt->execute()){
+        $stmt->store_result();
+        $stmt->bind_result($NomEmpleado,$ApeEmpleado);
+        while ($stmt->fetch()) {
+            $html = "";
+            $status="ok";
+        }
+        if($status!="ok"){
+            $info = "No ha sido posible encontrar al usuario";
+            $aux=json_decode(modalInfo($info,$accion),true);
+            $html = $aux['html'];
+        }
+    }else{
+        $html = $stmt->errno . " " . $stmt->error;
+        $status = "KO";
+        }
+    $stmt->close();
+   echo json_encode(array("status"=>$status,"html"=>$html));
+}
+if($accion==="comprobarEdit"){
+    $html;
+    $status="KO";
+    $id = $aux['id'];
+    $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
+    $oConni->set_charset('utf8');
+    $stmt = $oConni->prepare("SELECT NOMBRE,APELLIDOS FROM EMPLEADOS WHERE ID_EMPLEADO = ?");
+    $stmt->bind_param('i',$id);
+    if($stmt->execute()){
+        $stmt->store_result();
+        $stmt->bind_result($NomEmpleado,$ApeEmpleado);
+        while ($stmt->fetch()) {
+            $html = "";
+            $status="ok";
+        }
+        if($status!="ok"){
+            $info = "No ha sido posible encontrar al usuario";
+            $aux=json_decode(modalInfo($info,$accion),true);
+            $html = $aux['html'];
+        }
+    }else{
+        $html = $stmt->errno . " " . $stmt->error;
+        $status = "KO";
+        }
+    $stmt->close();
+   echo json_encode(array("status"=>$status,"html"=>$html));
 }
 /*
 if($accion==='Create'){

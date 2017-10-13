@@ -115,8 +115,8 @@ and open the template in the editor.
         <div id="divGrid">
             <div class="divFormulario" id="divAccNuevo">
                 <a class="btn btn-warning" href="#" onclick="Create()">Nuevo</a>
-                <a class="btn btn-warning" href="#" onclick="Edit()">Editar</a>
-                <a class="btn btn-warning" href="#" onclick="Delete()">Borrar</a>
+                <a class="btn btn-warning" href="#" onclick="comprobarEdit()">Editar</a>
+                <a class="btn btn-warning" href="#" onclick="comprobarDelete()">Borrar</a>
                 <input type="text" class="btn" name="txtIdActual" id="txtIdActual" value=""/>
             </div>    
             <div class="divTable" id="divDatos"></div>
@@ -195,6 +195,46 @@ and open the template in the editor.
         function Progreso() {
             $("#divDatos").html("<img src='ajax-loader.gif'> Cargando datos...");
             } 
+        function comprobarDelete(){
+            oRegistro.id = $("#txtIdActual").val();
+            oRegistro.accion = "comprobarDelete";
+            let data = JSON.stringify(oRegistro);
+            $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: {"data": data
+                },
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    if(respuesta.status==="ok"){
+                        Delete();
+                    }else{
+                        $("#divNuevo").html(respuesta.html);
+                        toggleForm();
+                    }
+                    
+                }
+            });
+        }
+        function comprobarEdit(){
+            oRegistro.id = $("#txtIdActual").val();
+            oRegistro.accion = "comprobarEdit";
+            let data = JSON.stringify(oRegistro);
+            $.ajax({type: "POST",
+                url: "crudEmpleados.php",
+                data: {"data": data
+                },
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    if(respuesta.status==="ok"){
+                        Edit();
+                    }else{
+                        $("#divNuevo").html(respuesta.html);
+                        toggleForm();
+                    }
+                    
+                }
+            });
+        }
         function Delete(){
             oRegistro.accion = "Delete";
             oRegistro.id = $("#txtIdActual").val();
