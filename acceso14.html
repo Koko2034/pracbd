@@ -146,14 +146,12 @@ and open the template in the editor.
             let apellidos = $("#txtApellidos").val();
             if(nombre!="" && apellidos !=""){
                 $("#butEnviar").attr("disabled", false);
-                console.log("prueba")
             }else{
                 $("#butEnviar").attr("disabled", true);
             }
         }
         function llenarAcceso14() {
             Progreso();
-            console.log(oRegistro.paginaAct);
             let data = JSON.stringify(oRegistro);
             $.ajax({type: "POST",
                 data: {"data": data},
@@ -227,7 +225,6 @@ and open the template in the editor.
             });
         }
         function comprobarEdit(){
-            console.log("hola")
             oRegistro.id = $("#txtIdActual").val();
             oRegistro.accion = "comprobarEdit";
             let data = JSON.stringify(oRegistro);
@@ -295,7 +292,6 @@ and open the template in the editor.
                 },
                 success: function (data) {
                     var respuesta = $.parseJSON(data);
-                   console.log(respuesta.pag);
                     if(respuesta.pag>0){
                         oRegistro.paginaAct=respuesta.pag;
                     }
@@ -313,8 +309,7 @@ and open the template in the editor.
         function Edit(){
             oRegistro.accion= "Edit";
             oRegistro.id = $("#txtIdActual").val();
-            petAjax();
-           /* let data = JSON.stringify(oRegistro);
+            let data = JSON.stringify(oRegistro);
             $.ajax({type: "POST",
                 url: "crudEmpleados.php",
                 data: {"data": data
@@ -325,7 +320,7 @@ and open the template in the editor.
                     controlText();
                     toggleForm();
                 }
-            });*/
+            });
             
         }
         function doAccion(accion) {
