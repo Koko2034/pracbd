@@ -339,6 +339,7 @@ and open the template in the editor.
                         oRegistro.orden === "A" ? oRegistro.orden="D":oRegistro.orden="A";
                     }
                     oRegistro.campo="I";
+                    oRegistro.paginaAct =1;
                     llenarAcceso14();
                 });
         $("body").on("click", "#divNOMBRE",
@@ -347,6 +348,7 @@ and open the template in the editor.
                      
                     oRegistro.orden === "A" ? oRegistro.orden="D":oRegistro.orden="A";
                     }
+                    oRegistro.paginaAct =1;
                     oRegistro.campo="N";
                     llenarAcceso14();          
                 });
@@ -355,6 +357,7 @@ and open the template in the editor.
                     if(oRegistro.campo==="A"){
                         oRegistro.orden === "A" ? oRegistro.orden="D":oRegistro.orden="A";
                     }
+                    oRegistro.paginaAct =1;
                     oRegistro.campo="A";
                     llenarAcceso14();
                    
