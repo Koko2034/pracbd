@@ -1,8 +1,10 @@
 <?php
+
 //Establezco ver todos los errores
 ini_set('error_reporting', E_ALL ^ E_NOTICE);
 ini_set('display_errors', 'on');
 date_default_timezone_set('Europe/Madrid');
+
 $html="";
 $debug=null;
 $data = ($_POST['data']);
@@ -11,9 +13,9 @@ $campo = $aux['campo'];
 $orden =  $aux['orden'];
 $paginaAct =  $aux['paginaAct'];
 $pagLimit = (int)(($paginaAct-1)*15);
-//$oConni = new mysqli('localhost', 'alumno', 's231234', 'INMOLOSA');
 $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
 $oConni->set_charset('utf8');
+
 if($campo === "A"){
     $orden === "D" ? $campo = "APELLIDOS DESC":$campo="APELLIDOS ASC";
 }
@@ -52,6 +54,7 @@ if($stmt->execute()){
         $html.='<table class="table"><thead><tr><th id="divID"><img id="imgID" src="arrow_down_blue.gif"/>Id</th>';
         $html.='<th id="divNOMBRE">Nombre</th>';
         $html.='<th id="divAPELLIDOS">Apellidos</th></tr></thead><tbody>';
+
     }
     if($campo === "ID_EMPLEADO DESC"){
     

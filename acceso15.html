@@ -19,6 +19,45 @@ and open the template in the editor.
                 width: 100%;
                 background-color: #247C90;
             }
+           /* #divID,#divNOMBRE,#divAPELLIDOS { cursor: pointer;}
+            #imgOID,#imgON,#imgOA {
+                display:inline-block;
+                width:16px;
+                height: 16px;                
+            }
+            .up {
+                background-image: url('arrow_up_blue.gif');
+            }
+            .down {
+                background-image: url('arrow_down_blue.gif');
+            }
+           #divGrid{
+               margin: 0 auto;
+               text-align: center;
+               margin-bottom: 15px;
+           }
+
+
+            #divBarra { text-align: center;
+                        margin: 0 auto;
+                        margin-top: 15px;
+                        }  
+            #divNuevo {
+                text-align: center;
+                margin: 0 auto;
+                border-radius: 10px 10px 10px 10px;
+                -moz-border-radius: 10px 10px 10px 10px;
+                -webkit-border-radius: 10px 10px 10px 10px;
+                border: 0px solid #000000;
+                background-color: #ebebeb;
+            }
+            tr,th{
+                text-align: center;
+            }
+            #divDatos{
+                margin:0 auto;
+                margin-top:15px;
+            }*/
             header{
                 width: 100%;
                 height: 5%;
@@ -68,15 +107,10 @@ and open the template in the editor.
                 height: 100%;
                 width: 8%;
             }
-            btn{
-                color:#fff;
-                background-color:#f0ad4e;
-                border-color:#eea236;
-            }
         </style>
     </head>
     <body>
-        <header>Práctica Acceso a BBDD14</header>
+        <header>Práctica Acceso a BBDD15</header>
         <div class="divFormulario" id="divNuevo"></div>
         <div id="divGrid">
             <div class="divFormulario" id="divAccNuevo">
@@ -96,16 +130,15 @@ and open the template in the editor.
     </body>
     <script>
         var oRegistro = createObject();
-        $(document).ready(function () { 
-            let data = JSON.stringify(oRegistro);
+        $(document).ready(function () {
+            oRegistro.accion = "configuraAcceso";
             $.ajax({type: "POST",
-                data: {"data": data},
-                url: "configuraAcceso14.php",
+                url: "crudEmpleados2.php",
                 success: function (data) {
-                    var respuesta = JSON.parse(data);
-                    oRegistro.nTotalReg =respuesta.nTotalReg;
-                    oRegistro.nTotalPag = respuesta.nTotalPag;
-                    llenarAcceso14();
+                    console.log(data)
+                    //var respuesta = $.parseJSON(data);
+                    //oRegistro.nTotalPag = respuesta.nTotalPag;
+                    //llenarAcceso15();
                 }
             });
             
@@ -119,12 +152,12 @@ and open the template in the editor.
                 $("#butEnviar").attr("disabled", true);
             }
         }
-        function llenarAcceso14() {
+        function llenarAcceso15() {
             Progreso();
             let data = JSON.stringify(oRegistro);
             $.ajax({type: "POST",
                 data: {"data": data},
-                url: "llenarAcceso14.php",
+                url: "llenarAcceso15.php",
                 success: function (data) {
                     var respuesta = $.parseJSON(data);
                     $("#divDatos").html(respuesta.html);
@@ -141,6 +174,10 @@ and open the template in the editor.
             datos.paginaAct = 1;
             return datos;
         }
+        function Progreso() {
+            $("#divDatos").html("<img src='ajax-loader.gif'> Cargando datos...");
+            } 
+        /*
         function changePage(accion){
             var pagAct = oRegistro.paginaAct;
             var nTotalPag = oRegistro.nTotalPag;
@@ -163,22 +200,20 @@ and open the template in the editor.
                 pagAct = oRegistro.nTotalPag;
             }
             oRegistro.paginaAct = pagAct;
-            llenarAcceso14();
+            llenarAcceso15();
         }
         function guardaID(id){
             $("#txtIdActual").val(id);
             $('.selected').removeClass('selected');
             $('#'+id).addClass('selected');
         }
-        function Progreso() {
-            $("#divDatos").html("<img src='ajax-loader.gif'> Cargando datos...");
-            } 
+        
         function comprobarDelete(){
             oRegistro.id = $("#txtIdActual").val();
             oRegistro.accion = "comprobarDelete";
             let data = JSON.stringify(oRegistro);
             $.ajax({type: "POST",
-                url: "crudEmpleados.php",
+                url: "crudEmpleados2.php",
                 data: {"data": data
                 },
                 success: function (data) {
@@ -198,7 +233,7 @@ and open the template in the editor.
             oRegistro.accion = "comprobarEdit";
             let data = JSON.stringify(oRegistro);
             $.ajax({type: "POST",
-                url: "crudEmpleados.php",
+                url: "crudEmpleados2.php",
                 data: {"data": data
                 },
                 success: function (data) {
@@ -217,9 +252,10 @@ and open the template in the editor.
         function Delete(){
             oRegistro.accion = "Delete";
             oRegistro.id = $("#txtIdActual").val();
-             let data = JSON.stringify(oRegistro);
+            petAjax();
+           /* let data = JSON.stringify(oRegistro);
             $.ajax({type: "POST",
-                url: "crudEmpleados.php",
+                url: "crudEmpleados2.php",
                 data: {"data": data
                 },
                 success: function (data) {
@@ -241,7 +277,7 @@ and open the template in the editor.
             $("#divNuevo").html('');
             $("#txtIdActual").val("");
             toggleForm();
-            llenarAcceso14();
+            llenarAcceso15();
         }
         function confirmarAccion(){
             if(oRegistro.accion==="Delete"){
@@ -255,24 +291,22 @@ and open the template in the editor.
             }
             let data = JSON.stringify(oRegistro);
             $.ajax({type: "POST",
-                url: "crudEmpleados.php",
+                url: "crudEmpleados2.php",
                 data: {"data": data
                 },
                 success: function (data) {
                     var respuesta = $.parseJSON(data);
-                    if(oRegistro.accion==="confirmDelete"){
-                        oRegistro.nTotalReg--;
+                    oRegistro.nTotalPag=respuesta.nTotalPag;
+                    if(respuesta.pag>0){
+                        oRegistro.paginaAct=respuesta.pag;
                     }
-                    if(oRegistro.accion==="confirmCreate"){
-                        oRegistro.nTotalReg++;
+                    if(respuesta.pag===0){
+                        oRegistro.paginaAct=oRegistro.nTotalPag;
                     }
-                    oRegistro.nTotalPag=Math.ceil(oRegistro.nTotalReg/15);
-                    oRegistro.paginaAct=respuesta.pag;
                     $("#txtIdActual").val("");
                     $("#divNuevo").html(respuesta.html);
                     toggleForm();
-                    llenarAcceso14();
-                     
+                    llenarAcceso15();     
                 }
             });
            
@@ -282,7 +316,7 @@ and open the template in the editor.
             oRegistro.id = $("#txtIdActual").val();
             let data = JSON.stringify(oRegistro);
             $.ajax({type: "POST",
-                url: "crudEmpleados.php",
+                url: "crudEmpleados2.php",
                 data: {"data": data
                 },
                 success: function (data) {
@@ -308,11 +342,12 @@ and open the template in the editor.
             }
             let data = JSON.stringify(oRegistro);
             $.ajax({type: "POST",
-                url: "crudEmpleados.php",
+                url: "crudEmpleados2.php",
                 data: {"data": data},
                 success: function (data) {
                   var respuesta = $.parseJSON(data);
                     $("#divNuevo").html(respuesta.html);
+
                 }
             });
             
@@ -320,9 +355,9 @@ and open the template in the editor.
         }
         function Create(){
             oRegistro.accion= "Create";
-           let data = JSON.stringify(oRegistro);
+           /* let data = JSON.stringify(oRegistro);
             $.ajax({type: "POST",
-                url: "crudEmpleados.php",
+                url: "crudEmpleados2.php",
                 data: {"data": data
                 },
                 success: function (data) {
@@ -331,15 +366,18 @@ and open the template in the editor.
                     toggleForm();
                 }
             });
+
+            petAjax();
            
         }
+
         $("body").on("click", "#divID",
                 function () {
                     if(oRegistro.campo==="I"){
                         oRegistro.orden === "A" ? oRegistro.orden="D":oRegistro.orden="A";
                     }
                     oRegistro.campo="I";
-                    llenarAcceso14();
+                    llenarAcceso15();
                 });
         $("body").on("click", "#divNOMBRE",
                 function () {
@@ -348,7 +386,7 @@ and open the template in the editor.
                     oRegistro.orden === "A" ? oRegistro.orden="D":oRegistro.orden="A";
                     }
                     oRegistro.campo="N";
-                    llenarAcceso14();          
+                    llenarAcceso15();          
                 });
         $("body").on("click", "#divAPELLIDOS",
                 function () {
@@ -356,10 +394,21 @@ and open the template in the editor.
                         oRegistro.orden === "A" ? oRegistro.orden="D":oRegistro.orden="A";
                     }
                     oRegistro.campo="A";
-                    llenarAcceso14();
+                    llenarAcceso15();
                    
                 });
-        
-  
+        function petAjax(){
+            let data = JSON.stringify(oRegistro);
+            $.ajax({type: "POST",
+                url: "crudEmpleados2.php",
+                data: {"data": data
+                },
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    $("#divNuevo").html(respuesta.html);
+                    toggleForm();
+                }
+            });
+        }*/  
     </script>
 </html>

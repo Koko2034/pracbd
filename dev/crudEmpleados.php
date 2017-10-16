@@ -6,33 +6,11 @@ date_default_timezone_set('Europe/Madrid');
 $accion = ($_POST['data']);
 $aux = json_decode($accion,true);
 $accion = $aux['accion'];
-if($accion==="comprobarDelete"){
-    $html;
-    $status="KO";
-    $id = $aux['id'];
-    //$oConni = new mysqli('localhost', 'alumno', 's231234', 'INMOLOSA');
-    $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
-    $oConni->set_charset('utf8');
-    $stmt = $oConni->prepare("SELECT NOMBRE,APELLIDOS FROM EMPLEADOS WHERE ID_EMPLEADO = ?");
-    $stmt->bind_param('i',$id);
-    if($stmt->execute()){
-        $stmt->store_result();
-        $stmt->bind_result($NomEmpleado,$ApeEmpleado);
-        while ($stmt->fetch()) {
-            $html = "";
-            $status="ok";
-        }
-        if($status!="ok"){
-            $info = "No ha sido posible encontrar al usuario";
-            $aux=json_decode(modalInfo($info,$accion),true);
-            $html = $aux['html'];
-        }
-    }else{
-        $html = $stmt->errno . " " . $stmt->error;
-        $status = "KO";
-        }
-    $stmt->close();
-   echo json_encode(array("status"=>$status,"html"=>$html));
+
+if($accion==="Delete"){
+    $id =$aux['id'];
+    $info = "Desea borrar al usuario con Id : ".$id;
+    echo modalInfo($info,$accion);
 }
 if($accion==="confirmDelete"){
     $id =$aux['id'];
@@ -40,7 +18,6 @@ if($accion==="confirmDelete"){
     $orden = $aux['orden'];
     $campo = campo($campo,$orden);
     $pag=1;
-    //$oConni = new mysqli('localhost', 'alumno', 's231234', 'INMOLOSA');
     $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
     $oConni->set_charset('utf8');
     $stmt = $oConni->prepare("DELETE FROM EMPLEADOS WHERE ID_EMPLEADO = ?");
@@ -57,43 +34,6 @@ if($accion==="confirmDelete"){
     $stmt->close();
     echo json_encode(array("status"=>$status,"html"=>$html,"pag"=>$pag));
 }
-if($accion==="Delete"){
-    $id =$aux['id'];
-    $info = "Desea borrar al usuario con Id : ".$id;
-    echo modalInfo($info,$accion);
-}
-if($accion==="comprobarEdit"){
-    $html;
-    $status="KO";
-    $id = $aux['id'];
-    //$oConni = new mysqli('localhost', 'alumno', 's231234', 'INMOLOSA');
-    $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
-    $oConni->set_charset('utf8');
-    $stmt = $oConni->prepare("SELECT NOMBRE,APELLIDOS FROM EMPLEADOS WHERE ID_EMPLEADO = ?");
-    $stmt->bind_param('i',$id);
-    if($stmt->execute()){
-        $stmt->store_result();
-        $stmt->bind_result($NomEmpleado,$ApeEmpleado);
-        while ($stmt->fetch()) {
-            $html = "";
-            $status="ok";
-        }
-        if($status!="ok"){
-            $info = "No ha sido posible encontrar al usuario";
-            $aux=json_decode(modalInfo($info,$accion),true);
-            $html = $aux['html'];
-        }
-    }else{
-        $html = $stmt->errno . " " . $stmt->error;
-        $status = "KO";
-        }
-    $stmt->close();
-   echo json_encode(array("status"=>$status,"html"=>$html));
-}
-if($accion==="Edit"){
-    $id =$aux['id'];
-    echo displayEdit($id);
-}
 if($accion === "confirmUpdate"){
     $html="";
     $status;
@@ -104,7 +44,6 @@ if($accion === "confirmUpdate"){
     $orden = $aux['orden'];
     $campo = campo($campo,$orden);
     $pag;
-    //$oConni = new mysqli('localhost', 'alumno', 's231234', 'INMOLOSA');
     $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
     $oConni->set_charset('utf8');
     $stmt = $oConni->prepare("UPDATE EMPLEADOS SET NOMBRE = ? , 
@@ -122,18 +61,6 @@ if($accion === "confirmUpdate"){
     $stmt->close();
     echo json_encode(array("status"=>"ko","html"=>$html,"pag"=>$pag));
 }
-if($accion==="update"){
-    $id =$aux['id'];
-    $nombre = $aux['nombre'];
-    $apellidos = $aux['apellidos'];
-    $info = "Desea actualizar los datos del usuario cuya id es: ".$id .". Siendo ahora su nombre: ".$nombre." y apellidos: ".$apellidos;
-    echo modalInfo($info,$accion);
-}
-if($accion === "Create"){
-    $id=null;
-    $html = formCreate($id,"","");
-    echo json_encode(array("status"=>"ok","html"=>$html));
-}
 if($accion==="confirmCreate"){
     $nombre = $aux['nombre'];
     $apellidos = $aux['apellidos'];
@@ -142,7 +69,6 @@ if($accion==="confirmCreate"){
     $campo =$aux['campo'];
     $orden = $aux['orden'];
     $campo=campo( $campo,$orden);
-    //$oConni = new mysqli('localhost', 'alumno', 's231234', 'INMOLOSA');
     $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
     $oConni->set_charset('utf8');
     $stmt = $oConni->prepare("INSERT INTO EMPLEADOS (NOMBRE,APELLIDOS) VALUES (?,?)");
@@ -165,11 +91,81 @@ if($accion==="confirmCreate"){
         $stmt->close();
     echo json_encode(array("status"=>$status,"html"=>$html,"pag"=>$pag));
 }
+if($accion==="Edit"){
+    $id =$aux['id'];
+    echo displayEdit($id);
+}
+if($accion==="update"){
+    $id =$aux['id'];
+    $nombre = $aux['nombre'];
+    $apellidos = $aux['apellidos'];
+    $info = "Desea actualizar los datos del usuario cuya id es: ".$id .". Siendo ahora su nombre: ".$nombre." y apellidos: ".$apellidos;
+    echo modalInfo($info,$accion);
+}
+if($accion === "Create"){
+    $id=null;
+    $html = formCreate($id,"","");
+    echo json_encode(array("status"=>"ok","html"=>$html));
+}
 if($accion==="createUser"){
     $nombre = $aux['nombre'];
     $apellidos = $aux['apellidos'];
     $info = "Desea introducir un nuevo usuario que tendra como nombre: ".$nombre. " y apellidos: ".$apellidos;
     echo modalInfo($info,$accion);
+}
+if($accion==="comprobarDelete"){
+    $html;
+    $status="KO";
+    $id = $aux['id'];
+    $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
+    $oConni->set_charset('utf8');
+    $stmt = $oConni->prepare("SELECT NOMBRE,APELLIDOS FROM EMPLEADOS WHERE ID_EMPLEADO = ?");
+    $stmt->bind_param('i',$id);
+    if($stmt->execute()){
+        $stmt->store_result();
+        $stmt->bind_result($NomEmpleado,$ApeEmpleado);
+        while ($stmt->fetch()) {
+            $html = "";
+            $status="ok";
+        }
+        if($status!="ok"){
+            $info = "No ha sido posible encontrar al usuario";
+            $aux=json_decode(modalInfo($info,$accion),true);
+            $html = $aux['html'];
+        }
+    }else{
+        $html = $stmt->errno . " " . $stmt->error;
+        $status = "KO";
+        }
+    $stmt->close();
+   echo json_encode(array("status"=>$status,"html"=>$html));
+}
+if($accion==="comprobarEdit"){
+    $html;
+    $status="KO";
+    $id = $aux['id'];
+    $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
+    $oConni->set_charset('utf8');
+    $stmt = $oConni->prepare("SELECT NOMBRE,APELLIDOS FROM EMPLEADOS WHERE ID_EMPLEADO = ?");
+    $stmt->bind_param('i',$id);
+    if($stmt->execute()){
+        $stmt->store_result();
+        $stmt->bind_result($NomEmpleado,$ApeEmpleado);
+        while ($stmt->fetch()) {
+            $html = "";
+            $status="ok";
+        }
+        if($status!="ok"){
+            $info = "No ha sido posible encontrar al usuario";
+            $aux=json_decode(modalInfo($info,$accion),true);
+            $html = $aux['html'];
+        }
+    }else{
+        $html = $stmt->errno . " " . $stmt->error;
+        $status = "KO";
+        }
+    $stmt->close();
+   echo json_encode(array("status"=>$status,"html"=>$html));
 }
 function modalInfo($info,$accion){
     $html ='<div class="modal-dialog" role="document">';
@@ -186,7 +182,6 @@ function modalInfo($info,$accion){
 function displayEdit($id){
     $html;
     $status;
-    //$oConni = new mysqli('localhost', 'alumno', 's231234', 'INMOLOSA');
     $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
     $oConni->set_charset('utf8');
     $stmt = $oConni->prepare("SELECT NOMBRE,APELLIDOS FROM EMPLEADOS WHERE ID_EMPLEADO = ?");
@@ -244,8 +239,8 @@ function campo($campo,$orden){
     }
     return $campo;
 }
+
 function calculatePag($id,$campo){
-    //$oConni = new mysqli('localhost', 'alumno', 's231234', 'INMOLOSA');
     $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
     $oConni->set_charset('utf8');
     $stmt = $oConni->prepare("SELECT ID_EMPLEADO, NOMBRE,APELLIDOS FROM EMPLEADOS ORDER BY $campo ");
@@ -263,7 +258,6 @@ function calculatePag($id,$campo){
     return $posicion;
 }
 /*function calculatePag($id,$campo){
-    //$oConni = new mysqli('localhost', 'alumno', 's231234', 'INMOLOSA');
     $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
     $oConni->set_charset('utf8');
     $paginaAct;

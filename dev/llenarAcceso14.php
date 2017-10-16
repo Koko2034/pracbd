@@ -11,7 +11,6 @@ $campo = $aux['campo'];
 $orden =  $aux['orden'];
 $paginaAct =  $aux['paginaAct'];
 $pagLimit = (int)(($paginaAct-1)*15);
-//$oConni = new mysqli('localhost', 'alumno', 's231234', 'INMOLOSA');
 $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
 $oConni->set_charset('utf8');
 if($campo === "A"){
