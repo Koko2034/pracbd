@@ -9,6 +9,7 @@ date_default_timezone_set('Europe/Madrid');
 $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
 $oConni->set_charset('utf8');
 
+//Version estamentos
 $stmt = $oConni->prepare("SELECT count(NOMBRE)  from  EMPLEADOS");
 $nTotalReg =0;
 $NumRegPag= 15;
@@ -22,6 +23,10 @@ $stmt->bind_result($NumEmple);
 if ($stmt->fetch()) {
    $nTotalReg = $NumEmple;
 }
+
+//Version Trigger
+
+
 $stmt->close();
 $nTotalPag = ceil($nTotalReg/$NumRegPag);
 
