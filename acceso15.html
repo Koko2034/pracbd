@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../css/structure.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script type="text/javascript" src="../js/jquery-3.1.0.min.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB7SiNPE9bdi9QjxCn-HvHhmj0pbmxd7Uc">    </script>
     <script>
         $.ajax({
             type: "POST",
@@ -21,6 +22,7 @@
                 createOption(respuesta.paises);
             }
         });
+
     </script>
     <style>
         html,
@@ -42,29 +44,35 @@
         #butCreate {
             float: right;
         }
-        #modalInfo{
+
+        #modalInfo {
             display: none;
         }
+        #txtInfo,#txtInfoSubject{
+            color:black
+        }
+        
     </style>
 </head>
+
 
 <body>
     <header>Práctica Acceso15</header>
     <main>
-    
-            <div class="modal-dialog" role="document" id="modalInfo">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 class="modal-title">Informacion</h3>
-                    </div>
-                    <div class="modal-body">
-                        <p id="txtInfo">Error al introducir</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-warning" onclick=toggleForm()>Atrás</button></div>
+
+        <div class="modal-dialog" role="document" id="modalInfo">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="txtInfoSubject">Informacion</h3>
                 </div>
+                <div class="modal-body">
+                    <div id="txtInfo"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" onclick=toggleForm()>Atrás</button></div>
             </div>
-        
+        </div>
+
         <div class="container" id="divFormu">
             <div class="container" id="idCreate">
                 <form>
@@ -82,7 +90,7 @@
                     <div class="form-group row">
                         <label for="lugar" class="col-sm-2 col-form-label col-form-label-lg">Lugar</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control form-control-lg" id="lugar" placeholder="Villanueva del trabuco">
+                            <input type="text" class="form-control form-control-lg" id="lugar" placeholder="Villanueva del trabuco" onkeyup="getLatLon()">
                         </div>
                         <label for="latitud" class="col-sm-2 col-form-label col-form-label-lg">Latitud</label>
                         <div class="col-sm-2">
@@ -142,13 +150,15 @@
 
     function createPoblacion() {
 
-        formu.pais = pais.value;
-        formu.poblacion = poblacion.value;
-        formu.lugar = lugar.value;
-        formu.latitud = latitud.value;
-        formu.longitud = longitud.value;
+        formu.PAIS = pais.value;
+        formu.LUGAR = sanity(lugar.value);
+        formu.LUGARCT = lugar.value;
+        formu.POBLACION = poblacion.value;
+        formu.LAT = latitud.value;
+        formu.LON = longitud.value;
+      
         let data = JSON.stringify(formu);
-        $.ajax({
+       $.ajax({
             type: "POST",
             data: {
                 "accion": "createPoblacion",
@@ -157,7 +167,10 @@
             url: "crudPoblaciones.php",
             success: function (data) {
                 var respuesta = JSON.parse(data);
-                console.log(data);
+                console.log(respuesta.status);
+                console.log(respuesta.debug);
+                respuesta.status = "OK"? html = "Introducido correctamente":"Error al introducirlo";
+                $("#txtInfo").html(html);
                 clean();
                 toggleForm();
             }
@@ -165,11 +178,11 @@
     }
 
     function findPoblacion() {
-        formu.pais = fpaises.value;
-        formu.lugar = flugar.value;
-        formu.poblacion = fpoblacion.value;
+        formu.PAIS = fpaises.value;
+        formu.LUGAR = sanity(flugar.value);
+        formu.POBLACION = fpoblacion.value;
         let data = JSON.stringify(formu);
-        $.ajax({
+         $.ajax({
             type: "POST",
             data: {
                 "accion": "findPoblacion",
@@ -178,39 +191,75 @@
             url: "crudPoblaciones.php",
             success: function (data) {
                 var respuesta = JSON.parse(data);
-                console.log(data);
+                console.log(respuesta);
+               // createTable(respuesta.result);
                 clean();
             }
         });
     }
 
     function clean() {
-        formu.pais = "";
-        formu.poblacion = "";
-        formu.lugar = "";
-        formu.latitud = "";
-        formu.longitud = "";
+        formu.PAIS = "";
+        formu.POBLACION = "";
+        formu.LUGAR = "";
+        formu.LUGARCT = "";
+        formu.LAT = "";
+        formu.LON ="";
     }
 
     function toggleForm() {
         if ($("#divFormu").is(':visible')) {
-            console.log("gola")
             $("#divFormu").hide('slow');
-            $("#modalInfo").css('display','block');
+            $("#modalInfo").css('display', 'block');
         } else {
             $("#divFormu").show('slow');
-            $("#modalInfo").css('display','none');
+            $("#modalInfo").css('display', 'none');
         }
     }
-    function createOption(data){
-        html="";
-        for(let i=0;i<data.length;i++){
-            html+='<option value='+data[i]+'>'+data[i]+'</option>';
+
+    function createOption(data) {
+        html = "";
+        for (let i = 0; i < data.length; i++) {
+            html += '<option value=' + data[i] + '>' + data[i] + '</option>';
         }
         $("#pais").html(html);
-        
+        $("#fpaises").html(html);
+
     }
+    function createTable(data){
+        const html = "";
+        for(k in data){
+            html ='<tr><th scope="row">'+(k+1)+'</th><td>'+data[k].lugar+'</td><td>'+data[k].pais+'</td><td>'+data[k].poblacion+'</td><td>'+data[k].latitud+'</td><td>'+data[k].longitud+'</td></tr>';
+        }
+        html ='<tr><th scope="row">1</th><td>Mark</td><td>Otto</td><td>@mdo</td></tr>';
+        $('#idBodyTable').html(html);
+    }
+    function sanity(cadena) {
+        cadena = cadena.replace(/á/gi, "a");
+        cadena = cadena.replace(/é/gi, "e");
+        cadena = cadena.replace(/í/gi, "i");
+        cadena = cadena.replace(/ó/gi, "o");
+        cadena = cadena.replace(/ú/gi, "u");
+        cadena = cadena.replace(/ñ/gi, "n");
+        cadena = cadena.toLowerCase();
+        return cadena;
+    }
+    function getLatLon(address) {
+        var geocoder = new google.maps.Geocoder().geocode({'address':address},function(results, status) {
+          if (status === 'OK') {
+            console.log(results[0].geometry.location.lat());
+            console.log(results[0].geometry.location.lng());
+          }
+          else{
+            console.log("FAIL");
+          }
+        });
+       
+      }
     /*
+    
+   
+    
     ALTER TABLE LUGARES PARTITION BY RANGE(ASCII(substring(pais,1,1)))(
         partition pA values less than (ASCII(66)),
         partition pB values less than (ASCII(67)),

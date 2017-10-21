@@ -5,111 +5,322 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <html>
-    <head>
-        <title></title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script type="text/javascript" src="../js/jquery-3.1.0.min.js"></script>  
-        <script type="text/javascript" src="../js/cookies.js"></script>
-        <link  rel="stylesheet" href="../css/estilosdivs.css">  
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        
-        <style>
-            html,body{
-                width: 100%;
-                background-color: #247C90;
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="../js/jquery-3.1.0.min.js"></script>
+    <script type="text/javascript" src="../js/cookies.js"></script>
+    <link rel="stylesheet" href="../css/estilosdivs.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <style>
+        html,
+        body {
+            width: 100%;
+            background-color: #247C90;
+        }
+
+        header {
+            width: 100%;
+            height: 5%;
+            font-size: 300%;
+            margin: 0 auto;
+            margin-top: 3%;
+            margin-bottom: 3%;
+            text-align: center;
+        }
+
+        .divFormulario {
+            width: 100%;
+            height: 25%;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .divTable {
+            width: 80%;
+            height: 50%;
+            margin: 0 auto;
+            text-align: center;
+            color: white;
+        }
+
+        tr,
+        th {
+            text-align: center;
+        }
+
+        .contForm {
+            width: 30%;
+            height: 30%;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        input[type="text"] {
+            text-align: center;
+        }
+
+        .selected {
+            background: orange;
+        }
+
+        #imgID,
+        {
+            width: 15%;
+            height: 100%;
+        }
+
+        #imgNOMBRE {
+            height: 100%;
+            width: 5%;
+        }
+
+        #imgApellidos {
+            height: 100%;
+            width: 8%;
+        }
+
+        btn {
+            color: #fff;
+            background-color: #f0ad4e;
+            border-color: #eea236;
+        }
+        #divNuevo{
+            display:none;
+            color:black;
+        }
+        #divGrid{
+            display:block;
+        }
+    </style>
+</head>
+
+<body>
+    <header>Práctica Acceso a BBDD14</header>
+    <div class="divFormulario" id="divNuevo">
+    
+    </div>
+    <div id="divGrid">
+        <div class="divFormulario" id="divAccNuevo">
+            <a class="btn btn-warning" href="#" onclick="crear()">Nuevo</a>
+            <a class="btn btn-warning" id="butEditar" disabled href="#" onclick="editar()">Editar</a>
+            <a class="btn btn-warning" id="butBorrar" disabled href="#" onclick="borrar()">Borrar</a>
+            <input readonly type="text" class="btn" name="txtIdActual" id="txtIdActual" value="" />
+        </div>
+        <div class="divTable" id="divDatos"></div>
+        <div class="divFormulario" id="divBarra">
+            <a class="btn btn-warning" href="#" onclick="changePage('Primera')">Primero</a>
+            <a class="btn btn-warning" href="#" onclick="changePage('Anterior')">Anterior</a>
+            <input type="text" class="btn" id="paginaAct" readonly>
+            <a class="btn btn-warning" href="#" onclick="changePage('Siguiente')">Siguiente</a>
+            <a class="btn btn-warning" href="#" onclick="changePage('Ultima')">Ultimo</a>
+        </div>
+</body>
+<script>
+    var oRegistro = createObject();
+    $(document).ready(function () {
+        let data = JSON.stringify(oRegistro);
+        $.ajax({
+            type: "POST",
+            data: {
+                "data": data
+            },
+            url: "configuraAcceso14.php",
+            success: function (data) {
+                var respuesta = JSON.parse(data);
+                oRegistro.nTotalReg = respuesta.nTotalReg;
+                oRegistro.nTotalPag = respuesta.nTotalPag;
+                llenarAcceso14();
             }
-            header{
-                width: 100%;
-                height: 5%;
-                font-size: 300%;
-                margin:0 auto;
-                margin-top:3%;
-                margin-bottom:3%;
-                text-align: center;
+        });
+
+    });
+
+    function createObject() {
+        let datos = new Object();
+        datos.campo = "I";
+        datos.orden = "A";
+        datos.paginaAct = 1;
+        return datos;
+    }
+
+    function llenarAcceso14() {
+        Progreso();
+        let data = JSON.stringify(oRegistro);
+        $.ajax({
+            type: "POST",
+            data: {
+                "data": data
+            },
+            url: "llenarAcceso14.php",
+            success: function (data) {
+                var respuesta = $.parseJSON(data);
+                $("#divDatos").html(respuesta.html);
+                $('#paginaAct').val(oRegistro.paginaAct);
             }
-            .divFormulario{
-                width: 100%;
-                height: 25%;
-                margin:0 auto;
-                text-align: center;
+        });
+
+    }
+
+    function Progreso() {
+        $("#divDatos").html("<img src='ajax-loader.gif'> Cargando datos...");
+    }
+
+    function changePage(accion) {
+        var pagAct = oRegistro.paginaAct;
+        var nTotalPag = oRegistro.nTotalPag;
+        if (accion === "Anterior") {
+            pagAct--;
+            if (pagAct < 1) {
+                pagAct = 1;
             }
-            .divTable{
-                width: 80%;
-                height: 50%;
-                margin: 0 auto;  
-                text-align: center;
-                color:white;
+        }
+        if (accion === "Siguiente") {
+            pagAct++;
+            if (pagAct > nTotalPag) {
+                pagAct = nTotalPag;
             }
-            tr,th{
-                text-align: center;
-            }
-            .contForm{
-                width: 30%;
-                height: 30%;
-                margin: 0 auto;
-                text-align: center;
-            }
-            input[type="text"] {  
-                text-align: center;
-            }
-            .selected{
-                background: orange;
-            }
-            #imgID,{
-                width: 15%;
-                height: 100%;
-            }
-            #imgNOMBRE{
-                height: 100%;
-                width: 5%;
-            }
-            #imgApellidos{
-                height: 100%;
-                width: 8%;
-            }
-            btn{
-                color:#fff;
-                background-color:#f0ad4e;
-                border-color:#eea236;
-            }
-        </style>
-    </head>
-    <body>
-        <header>Práctica Acceso a BBDD14</header>
-        <div class="divFormulario" id="divNuevo"></div>
-        <div id="divGrid">
-            <div class="divFormulario" id="divAccNuevo">
-                <a class="btn btn-warning" href="#" onclick="Create()">Nuevo</a>
-                <a class="btn btn-warning" href="#" onclick="comprobarEdit()">Editar</a>
-                <a class="btn btn-warning" href="#" onclick="comprobarDelete()">Borrar</a>
-                <input type="text" class="btn" name="txtIdActual" id="txtIdActual" value=""/>
-            </div>    
-            <div class="divTable" id="divDatos"></div>
-            <div class="divFormulario" id="divBarra">
-                <a class="btn btn-warning" href="#" onclick="changePage('Primera')">Primero</a>
-                <a class="btn btn-warning" href="#"  onclick="changePage('Anterior')">Anterior</a>
-                <input type="text" class="btn" id="paginaAct" readonly>
-                <a class="btn btn-warning" href="#"  onclick="changePage('Siguiente')">Siguiente</a>
-                <a class="btn btn-warning" href="#" onclick="changePage('Ultima')">Ultimo</a>
-            </div>
-    </body>
-    <script>
-        var oRegistro = createObject();
-        $(document).ready(function () { 
-            let data = JSON.stringify(oRegistro);
+        }
+        if (accion === "Primera") {
+            pagAct = 1;
+        }
+        if (accion === "Ultima") {
+            pagAct = oRegistro.nTotalPag;
+        }
+        oRegistro.paginaAct = pagAct;
+        llenarAcceso14();
+    }
+
+    function toggleForm() {
+        if($("#divNuevo").css("display")==="none"){
+            $("#divNuevo").css("display","block");
+
+            $("#divGrid").css("display","none");
+        }else{
+            $("#divGrid").css("display","block");
+            $("#divNuevo").css("display","none");
+        }   
+    }
+
+    function crear() {
+        oRegistro.accion = "crearFormNuevo";
+        oRegistro.id = "";
+        let data = JSON.stringify(oRegistro);
             $.ajax({type: "POST",
-                data: {"data": data},
-                url: "configuraAcceso14.php",
+                url: "crudEmpleados14.php",
+                data: {"data": data
+                },
                 success: function (data) {
-                    var respuesta = JSON.parse(data);
-                    oRegistro.nTotalReg =respuesta.nTotalReg;
-                    oRegistro.nTotalPag = respuesta.nTotalPag;
-                    llenarAcceso14();
+                    var respuesta = $.parseJSON(data);
+                    $('#divNuevo').html(respuesta.html);
+                    toggleForm();
                 }
             });
+    }
+    function doAccion() {
+
+            oRegistro.nombre=$('#txtNombre').val();
+            oRegistro.apellidos=$('#txtApellidos').val();
+            oRegistro.accion ==="crearFormNuevo"?oRegistro.accion="crear":oRegistro.accion="editar";
+            let data = JSON.stringify(oRegistro);
             
+            $.ajax({type: "POST",
+                url: "crudEmpleados14.php",
+                data: {"data": data},
+                success: function (data) {
+                  var respuesta = $.parseJSON(data);
+                    oRegistro.paginaAct=respuesta.pag;
+                    $("#butBorrar").attr("disabled",true);
+                    $("#butEditar").attr("disabled",true);
+                    llenarAcceso14();
+                    toggleForm();
+                }
+            });
+             
+        }
+
+
+    function editar() {
+        oRegistro.accion = "crearFormEdit";
+        oRegistro.id = $("#txtIdActual").val();
+        let data = JSON.stringify(oRegistro);
+            $.ajax({type: "POST",
+                url: "crudEmpleados14.php",
+                data: {"data": data
+                },
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    $('#divNuevo').html(respuesta.html);
+                    toggleForm();
+                }
+            });
+    }
+
+    function borrar() {
+        oRegistro.accion = "borrar";
+        oRegistro.id = $("#txtIdActual").val();
+        let data = JSON.stringify(oRegistro);
+       
+            $.ajax({type: "POST",
+                url: "crudEmpleados14.php",
+                data: {"data": data
+                },
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    $("#txtIdActual").val("");
+                    $("#butBorrar").attr("disabled",true);
+                    $("#butEditar").attr("disabled",true);
+                   llenarAcceso14();
+                }
+            });
+    }
+    function cancelarAccion() {
+            $("#divInfo").html('');
+            $("#txtIdActual").val("");
+            toggleForm();
+            llenarAcceso14();
+        }
+    function guardaID(id) {
+        $("#txtIdActual").val(id);
+        $('.selected').removeClass('selected');
+        $('#' + id).addClass('selected');
+        $("#butEditar").attr("disabled",false);
+        $("#butBorrar").attr("disabled",false);
+
+    }
+    $("body").on("click", "#divID",
+        function () {
+            if (oRegistro.campo === "I") {
+                oRegistro.orden === "A" ? oRegistro.orden = "D" : oRegistro.orden = "A";
+            }
+            oRegistro.campo = "I";
+            oRegistro.paginaAct = 1;
+            llenarAcceso14();
         });
+    $("body").on("click", "#divNOMBRE",
+        function () {
+            if (oRegistro.campo === "N") {
+
+                oRegistro.orden === "A" ? oRegistro.orden = "D" : oRegistro.orden = "A";
+            }
+            oRegistro.paginaAct = 1;
+            oRegistro.campo = "N";
+            llenarAcceso14();
+        });
+    $("body").on("click", "#divAPELLIDOS",
+        function () {
+            if (oRegistro.campo === "A") {
+                oRegistro.orden === "A" ? oRegistro.orden = "D" : oRegistro.orden = "A";
+            }
+            oRegistro.paginaAct = 1;
+            oRegistro.campo = "A";
+            llenarAcceso14();
+
+        });
+    /*
         function controlText(){
             let nombre = $("#txtNombre").val();
             let apellidos = $("#txtApellidos").val();
@@ -119,60 +330,10 @@ and open the template in the editor.
                 $("#butEnviar").attr("disabled", true);
             }
         }
-        function llenarAcceso14() {
-            Progreso();
-            let data = JSON.stringify(oRegistro);
-            $.ajax({type: "POST",
-                data: {"data": data},
-                url: "llenarAcceso14.php",
-                success: function (data) {
-                    var respuesta = $.parseJSON(data);
-                    $("#divDatos").html(respuesta.html);
-                    $('#paginaAct').val(oRegistro.paginaAct);
-                    }
-            });
-          
-        }
         
-        function createObject(){
-            let datos = new Object();
-            datos.campo = "I";
-            datos.orden = "A";
-            datos.paginaAct = 1;
-            return datos;
-        }
-        function changePage(accion){
-            var pagAct = oRegistro.paginaAct;
-            var nTotalPag = oRegistro.nTotalPag;
-            if(accion==="Anterior"){
-                pagAct--;
-                if (pagAct < 1) {
-                    pagAct = 1;
-                }
-            }
-            if(accion==="Siguiente"){
-                pagAct++;
-                if (pagAct > nTotalPag) {
-                    pagAct = nTotalPag;
-                }
-            }
-            if(accion==="Primera"){
-                pagAct = 1;
-            }
-            if(accion==="Ultima"){
-                pagAct = oRegistro.nTotalPag;
-            }
-            oRegistro.paginaAct = pagAct;
-            llenarAcceso14();
-        }
-        function guardaID(id){
-            $("#txtIdActual").val(id);
-            $('.selected').removeClass('selected');
-            $('#'+id).addClass('selected');
-        }
-        function Progreso() {
-            $("#divDatos").html("<img src='ajax-loader.gif'> Cargando datos...");
-            } 
+        
+        
+        
         function comprobarDelete(){
             oRegistro.id = $("#txtIdActual").val();
             oRegistro.accion = "comprobarDelete";
@@ -215,34 +376,11 @@ and open the template in the editor.
             });
         }
         function Delete(){
-            oRegistro.accion = "Delete";
-            oRegistro.id = $("#txtIdActual").val();
-             let data = JSON.stringify(oRegistro);
-            $.ajax({type: "POST",
-                url: "crudEmpleados.php",
-                data: {"data": data
-                },
-                success: function (data) {
-                    var respuesta = $.parseJSON(data);
-                    $("#divNuevo").html(respuesta.html);
-                    toggleForm();
-                }
-            });
+            
            
         }
-        function toggleForm() {
-            if ($("#divGrid").is(':visible')) {
-                $("#divGrid").hide('slow');
-            } else {
-                $("#divGrid").show('slow');
-            }
-        }
-        function cancelarAccion() {
-            $("#divNuevo").html('');
-            $("#txtIdActual").val("");
-            toggleForm();
-            llenarAcceso14();
-        }
+        
+        
         function confirmarAccion(){
             if(oRegistro.accion==="Delete"){
                 oRegistro.accion = "confirmDelete";
@@ -364,5 +502,7 @@ and open the template in the editor.
                 });
         
   
-    </script>
+   */
+</script>
+
 </html>
