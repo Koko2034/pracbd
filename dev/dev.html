@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <title>Document</title>
+    <style>
+    html,body,main{
+        width: 100%;
+        height: 100%;
+        background-color: #247C90;
+    }
+    header{
+        width: 100%;
+        height: 3%;
+        text-align: center;
+        font-size: 45px;
+        margin-top: 15px;
+        color:white;
+    }
+    main,section{
+
+        margin:15px;
+        padding: 15px;
+    }
+    .createClass{
+        margin:0 auto;
+        text-align: center;
+        width: 80%;
+        height: 30%;
+        border:1px solid black;
+      
+    }
+    label{
+        font-size: 2em;
+    }
+    </style>
+</head>
+<body>
+    <header>Práctica</header>
+    <main>
+        <section>
+            <article id="idCreate">
+                <form class="mr-sm-2" for="inlineFormCustomSelect" id="idForm">
+                        <form class="form-inline">
+                                <label class="mr-sm-2" for="inlineFormCustomSelect">Preference</label>
+                                <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="inlineFormCustomSelect">
+                                  <option selected>Choose...</option>
+                                  <option value="1">One</option>
+                                  <option value="2">Two</option>
+                                  <option value="3">Three</option>
+                                </select>
+                              
+                                <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+                                  <input type="checkbox" class="custom-control-input">
+                                  <span class="custom-control-indicator"></span>
+                                  <span class="custom-control-description">Remember my preference</span>
+                                </label>
+                              
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                              </form>
+            </article>
+            <article id="idFind" class="form-inline">
+                    <label for="">Pais</label>
+                    <input id="idPaisFind">
+                    <label for="">Lugares</label>
+                    <input id="idLugaresFind">
+                    <label for="">Poblacion</label>
+                    <input id="idPoblacionFind">
+            </article>
+            <article id="idTable"></article>
+        </section>
+    </main>
+    
+</body>
+</html>

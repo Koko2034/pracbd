@@ -11,11 +11,11 @@ $accion = $aux['accion'];
 $oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
 $oConni->set_charset('utf8');
 
+$id =$aux['id'];
 
 if($accion==="comprobarDelete"){
-    $html;
+  
     $status="KO";
-    $id = $aux['id'];
     $stmt = $oConni->prepare("SELECT NOMBRE,APELLIDOS FROM EMPLEADOS WHERE ID_EMPLEADO = ?");
     $stmt->bind_param('i',$id);
     if($stmt->execute()){
@@ -38,11 +38,7 @@ if($accion==="comprobarDelete"){
    echo json_encode(array("status"=>$status,"html"=>$html));
 }
 if($accion==="confirmDelete"){
-    $id =$aux['id'];
-    $campo = $aux['campo'];
-    $orden = $aux['orden'];
-    $campo = campo($campo,$orden);
-    $pag=1;
+   
     $stmt = $oConni->prepare("DELETE FROM EMPLEADOS WHERE ID_EMPLEADO = ?");
     $stmt->bind_param('s',$id);
     $status=null;
@@ -55,18 +51,15 @@ if($accion==="confirmDelete"){
         $status = "KO";
     }
     $stmt->close();
-    echo json_encode(array("status"=>$status,"html"=>$html,"pag"=>$pag));
+    echo json_encode(array("status"=>$status,"html"=>$html,"pag"=>1));
 }
 if($accion==="Delete"){
-    $id =$aux['id'];
     $info = "Desea borrar al usuario con Id : ".$id;
     echo modalInfo($info,$accion);
 }
 
 if($accion==="comprobarEdit"){
-    $html;
     $status="KO";
-    $id = $aux['id'];
     $stmt = $oConni->prepare("SELECT NOMBRE,APELLIDOS FROM EMPLEADOS WHERE ID_EMPLEADO = ?");
     $stmt->bind_param('i',$id);
     if($stmt->execute()){
@@ -90,9 +83,6 @@ if($accion==="comprobarEdit"){
    echo json_encode(array("status"=>$status,"html"=>$html));
 }
 if($accion==="Edit"){
-    $id =$aux['id'];
-    $html;
-    $status;
     $stmt = $oConni->prepare("SELECT NOMBRE,APELLIDOS FROM EMPLEADOS WHERE ID_EMPLEADO = ?");
     $stmt->bind_param('i',$id);
     if($stmt->execute()){
@@ -111,18 +101,10 @@ if($accion==="Edit"){
 }
 //$accion="confirmUpdate";
 if($accion === "confirmUpdate"){
-    $html="";
-    $status;
-    $id =$aux['id'];
     $nombre = $aux['nombre'];
     $apellidos = $aux['apellidos'];
     $campo = $aux['campo'];
     $orden = $aux['orden'];
-    $nombre = "javier";
-    $apellidos = " noguea";
-    $campo = "N";
-    $orden = "A";
-    $id=1755;
     $campo = campo($campo,$orden);
     $pag;
     $stmt = $oConni->prepare("UPDATE EMPLEADOS SET NOMBRE = ? , 
@@ -142,7 +124,7 @@ if($accion === "confirmUpdate"){
     
 }
 if($accion==="update"){
-    $id =$aux['id'];
+
     $nombre = $aux['nombre'];
     $apellidos = $aux['apellidos'];
     $info = "Desea actualizar los datos del usuario cuya id es: ".$id .". Siendo ahora su nombre: ".$nombre." y apellidos: ".$apellidos;
@@ -156,9 +138,6 @@ if($accion === "Create"){
 if($accion==="confirmCreate"){
     $nombre = $aux['nombre'];
     $apellidos = $aux['apellidos'];
-    $status="";
-    $pag;
-    $html="";
     $campo =$aux['campo'];
     $orden = $aux['orden'];
     $campo=campo($campo,$orden);

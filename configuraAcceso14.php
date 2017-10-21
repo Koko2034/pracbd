@@ -1,13 +1,6 @@
 <?php
 
-//Establezco ver todos los errores
-ini_set('error_reporting', E_ALL);
-ini_set('display_errors', 'on');
-date_default_timezone_set('Europe/Madrid');
-
-//$oConni = new mysqli('localhost', 'alumno', 's231234', 'INMOLOSA');
-$oConni = new mysqli('213.32.71.33', 'root', 'andujar34', 'INMOLOSA');
-$oConni->set_charset('utf8');
+require_once __DIR__ . './cabecera14.php';
 
 //Version estamentos
 $stmt = $oConni->prepare("SELECT count(NOMBRE)  from  EMPLEADOS");

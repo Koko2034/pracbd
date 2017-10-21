@@ -1,414 +1,249 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
-    <head>
-        <title></title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script type="text/javascript" src="../js/jquery-3.1.0.min.js"></script>  
-        <script type="text/javascript" src="../js/cookies.js"></script>
-        <link  rel="stylesheet" href="../css/estilosdivs.css">  
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        
-        <style>
-            html,body{
-                width: 100%;
-                background-color: #247C90;
-            }
-           /* #divID,#divNOMBRE,#divAPELLIDOS { cursor: pointer;}
-            #imgOID,#imgON,#imgOA {
-                display:inline-block;
-                width:16px;
-                height: 16px;                
-            }
-            .up {
-                background-image: url('arrow_up_blue.gif');
-            }
-            .down {
-                background-image: url('arrow_down_blue.gif');
-            }
-           #divGrid{
-               margin: 0 auto;
-               text-align: center;
-               margin-bottom: 15px;
-           }
+<html lang="en">
 
-
-            #divBarra { text-align: center;
-                        margin: 0 auto;
-                        margin-top: 15px;
-                        }  
-            #divNuevo {
-                text-align: center;
-                margin: 0 auto;
-                border-radius: 10px 10px 10px 10px;
-                -moz-border-radius: 10px 10px 10px 10px;
-                -webkit-border-radius: 10px 10px 10px 10px;
-                border: 0px solid #000000;
-                background-color: #ebebeb;
-            }
-            tr,th{
-                text-align: center;
-            }
-            #divDatos{
-                margin:0 auto;
-                margin-top:15px;
-            }*/
-            header{
-                width: 100%;
-                height: 5%;
-                font-size: 300%;
-                margin:0 auto;
-                margin-top:3%;
-                margin-bottom:3%;
-                text-align: center;
-            }
-            .divFormulario{
-                width: 100%;
-                height: 25%;
-                margin:0 auto;
-                text-align: center;
-            }
-            .divTable{
-                width: 80%;
-                height: 50%;
-                margin: 0 auto;  
-                text-align: center;
-                color:white;
-            }
-            tr,th{
-                text-align: center;
-            }
-            .contForm{
-                width: 30%;
-                height: 30%;
-                margin: 0 auto;
-                text-align: center;
-            }
-            input[type="text"] {  
-                text-align: center;
-            }
-            .selected{
-                background: orange;
-            }
-            #imgID,{
-                width: 15%;
-                height: 100%;
-            }
-            #imgNOMBRE{
-                height: 100%;
-                width: 5%;
-            }
-            #imgApellidos{
-                height: 100%;
-                width: 8%;
-            }
-        </style>
-    </head>
-    <body>
-        <header>Práctica Acceso a BBDD15</header>
-        <div class="divFormulario" id="divNuevo"></div>
-        <div id="divGrid">
-            <div class="divFormulario" id="divAccNuevo">
-                <a class="btn btn-warning" href="#" onclick="Create()">Nuevo</a>
-                <a class="btn btn-warning" href="#" onclick="comprobarEdit()">Editar</a>
-                <a class="btn btn-warning" href="#" onclick="comprobarDelete()">Borrar</a>
-                <input type="text" class="btn" name="txtIdActual" id="txtIdActual" value=""/>
-            </div>    
-            <div class="divTable" id="divDatos"></div>
-            <div class="divFormulario" id="divBarra">
-                <a class="btn btn-warning" href="#" onclick="changePage('Primera')">Primero</a>
-                <a class="btn btn-warning" href="#"  onclick="changePage('Anterior')">Anterior</a>
-                <as class="btn btn-warning" id="paginaAct"></a>
-                <a class="btn btn-warning" href="#"  onclick="changePage('Siguiente')">Siguiente</a>
-                <a class="btn btn-warning" href="#" onclick="changePage('Ultima')">Ultimo</a>
-            </div>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/structure.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript" src="../js/jquery-3.1.0.min.js"></script>
     <script>
-        var oRegistro = createObject();
-        $(document).ready(function () {
-            oRegistro.accion = "configuraAcceso";
-            $.ajax({type: "POST",
-                url: "crudEmpleados2.php",
-                success: function (data) {
-                    console.log(data)
-                    //var respuesta = $.parseJSON(data);
-                    //oRegistro.nTotalPag = respuesta.nTotalPag;
-                    //llenarAcceso15();
-                }
-            });
-            
+        $.ajax({
+            type: "POST",
+            data: {
+                "accion": "obtenerPaises"
+            },
+            url: "crudPoblaciones.php",
+            success: function (data) {
+                var respuesta = JSON.parse(data);
+                createOption(respuesta.paises);
+            }
         });
-        function controlText(){
-            let nombre = $("#txtNombre").val();
-            let apellidos = $("#txtApellidos").val();
-            if(nombre!="" && apellidos !=""){
-                $("#butEnviar").attr("disabled", false);
-            }else{
-                $("#butEnviar").attr("disabled", true);
-            }
-        }
-        function llenarAcceso15() {
-            Progreso();
-            let data = JSON.stringify(oRegistro);
-            $.ajax({type: "POST",
-                data: {"data": data},
-                url: "llenarAcceso15.php",
-                success: function (data) {
-                    var respuesta = $.parseJSON(data);
-                    $("#divDatos").html(respuesta.html);
-                    $('#paginaAct').val(oRegistro.paginaAct);
-                    }
-            });
-          
-        }
-        
-        function createObject(){
-            let datos = new Object();
-            datos.campo = "I";
-            datos.orden = "A";
-            datos.paginaAct = 1;
-            return datos;
-        }
-        function Progreso() {
-            $("#divDatos").html("<img src='ajax-loader.gif'> Cargando datos...");
-            } 
-        /*
-        function changePage(accion){
-            var pagAct = oRegistro.paginaAct;
-            var nTotalPag = oRegistro.nTotalPag;
-            if(accion==="Anterior"){
-                pagAct--;
-                if (pagAct < 1) {
-                    pagAct = 1;
-                }
-            }
-            if(accion==="Siguiente"){
-                pagAct++;
-                if (pagAct > nTotalPag) {
-                    pagAct = nTotalPag;
-                }
-            }
-            if(accion==="Primera"){
-                pagAct = 1;
-            }
-            if(accion==="Ultima"){
-                pagAct = oRegistro.nTotalPag;
-            }
-            oRegistro.paginaAct = pagAct;
-            llenarAcceso15();
-        }
-        function guardaID(id){
-            $("#txtIdActual").val(id);
-            $('.selected').removeClass('selected');
-            $('#'+id).addClass('selected');
-        }
-        
-        function comprobarDelete(){
-            oRegistro.id = $("#txtIdActual").val();
-            oRegistro.accion = "comprobarDelete";
-            let data = JSON.stringify(oRegistro);
-            $.ajax({type: "POST",
-                url: "crudEmpleados2.php",
-                data: {"data": data
-                },
-                success: function (data) {
-                    var respuesta = $.parseJSON(data);
-                    if(respuesta.status==="ok"){
-                        Delete();
-                    }else{
-                        $("#divNuevo").html(respuesta.html);
-                        toggleForm();
-                    }
-                    
-                }
-            });
-        }
-        function comprobarEdit(){
-            oRegistro.id = $("#txtIdActual").val();
-            oRegistro.accion = "comprobarEdit";
-            let data = JSON.stringify(oRegistro);
-            $.ajax({type: "POST",
-                url: "crudEmpleados2.php",
-                data: {"data": data
-                },
-                success: function (data) {
-                    var respuesta = $.parseJSON(data);
-                    if(respuesta.status==="ok"){
-                        Edit();
-                    }else{
-                        $("#divNuevo").html(respuesta.html);
-                        
-                        toggleForm();
-                    }
-                    
-                }
-            });
-        }
-        function Delete(){
-            oRegistro.accion = "Delete";
-            oRegistro.id = $("#txtIdActual").val();
-            petAjax();
-           /* let data = JSON.stringify(oRegistro);
-            $.ajax({type: "POST",
-                url: "crudEmpleados2.php",
-                data: {"data": data
-                },
-                success: function (data) {
-                    var respuesta = $.parseJSON(data);
-                    $("#divNuevo").html(respuesta.html);
-                    toggleForm();
-                }
-            });
-           
-        }
-        function toggleForm() {
-            if ($("#divGrid").is(':visible')) {
-                $("#divGrid").hide('slow');
-            } else {
-                $("#divGrid").show('slow');
-            }
-        }
-        function cancelarAccion() {
-            $("#divNuevo").html('');
-            $("#txtIdActual").val("");
-            toggleForm();
-            llenarAcceso15();
-        }
-        function confirmarAccion(){
-            if(oRegistro.accion==="Delete"){
-                oRegistro.accion = "confirmDelete";
-            }
-            if(oRegistro.accion==="update"){
-                oRegistro.accion="confirmUpdate";
-            }
-            if(oRegistro.accion==="createUser"){
-                oRegistro.accion="confirmCreate";
-            }
-            let data = JSON.stringify(oRegistro);
-            $.ajax({type: "POST",
-                url: "crudEmpleados2.php",
-                data: {"data": data
-                },
-                success: function (data) {
-                    var respuesta = $.parseJSON(data);
-                    oRegistro.nTotalPag=respuesta.nTotalPag;
-                    if(respuesta.pag>0){
-                        oRegistro.paginaAct=respuesta.pag;
-                    }
-                    if(respuesta.pag===0){
-                        oRegistro.paginaAct=oRegistro.nTotalPag;
-                    }
-                    $("#txtIdActual").val("");
-                    $("#divNuevo").html(respuesta.html);
-                    toggleForm();
-                    llenarAcceso15();     
-                }
-            });
-           
-        }
-        function Edit(){
-            oRegistro.accion= "Edit";
-            oRegistro.id = $("#txtIdActual").val();
-            let data = JSON.stringify(oRegistro);
-            $.ajax({type: "POST",
-                url: "crudEmpleados2.php",
-                data: {"data": data
-                },
-                success: function (data) {
-                    var respuesta = $.parseJSON(data);
-                    $("#divNuevo").html(respuesta.html);
-                    controlText();
-                    toggleForm();
-                }
-            });
-            
-        }
-        function doAccion(accion) {
-            if(id=$('#txtId').val()!=null){
-                oRegistro.id=$('#txtId').val();
-            }
-            oRegistro.nombre=$('#txtNombre').val();
-            oRegistro.apellidos=$('#txtApellidos').val();
-            if(accion==="confirm"){
-                oRegistro.accion="update";
-            }
-            if(accion==="Create"){
-                oRegistro.accion="createUser";
-            }
-            let data = JSON.stringify(oRegistro);
-            $.ajax({type: "POST",
-                url: "crudEmpleados2.php",
-                data: {"data": data},
-                success: function (data) {
-                  var respuesta = $.parseJSON(data);
-                    $("#divNuevo").html(respuesta.html);
-
-                }
-            });
-            
-            
-        }
-        function Create(){
-            oRegistro.accion= "Create";
-           /* let data = JSON.stringify(oRegistro);
-            $.ajax({type: "POST",
-                url: "crudEmpleados2.php",
-                data: {"data": data
-                },
-                success: function (data) {
-                    var respuesta = $.parseJSON(data);
-                    $("#divNuevo").html(respuesta.html);
-                    toggleForm();
-                }
-            });
-
-            petAjax();
-           
-        }
-
-        $("body").on("click", "#divID",
-                function () {
-                    if(oRegistro.campo==="I"){
-                        oRegistro.orden === "A" ? oRegistro.orden="D":oRegistro.orden="A";
-                    }
-                    oRegistro.campo="I";
-                    llenarAcceso15();
-                });
-        $("body").on("click", "#divNOMBRE",
-                function () {
-                    if(oRegistro.campo==="N"){
-                     
-                    oRegistro.orden === "A" ? oRegistro.orden="D":oRegistro.orden="A";
-                    }
-                    oRegistro.campo="N";
-                    llenarAcceso15();          
-                });
-        $("body").on("click", "#divAPELLIDOS",
-                function () {
-                    if(oRegistro.campo==="A"){
-                        oRegistro.orden === "A" ? oRegistro.orden="D":oRegistro.orden="A";
-                    }
-                    oRegistro.campo="A";
-                    llenarAcceso15();
-                   
-                });
-        function petAjax(){
-            let data = JSON.stringify(oRegistro);
-            $.ajax({type: "POST",
-                url: "crudEmpleados2.php",
-                data: {"data": data
-                },
-                success: function (data) {
-                    var respuesta = $.parseJSON(data);
-                    $("#divNuevo").html(respuesta.html);
-                    toggleForm();
-                }
-            });
-        }*/  
     </script>
+    <style>
+        html,
+        body,
+        header {
+            width: 100%;
+            background-color: black;
+            color: white;
+        }
+
+        header {
+            text-align: center;
+            height: 15%;
+            margin-top: 3%;
+            margin-bottom: 3%;
+            font-size: 4em;
+        }
+
+        #butCreate {
+            float: right;
+        }
+        #modalInfo{
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header>Práctica Acceso15</header>
+    <main>
+    
+            <div class="modal-dialog" role="document" id="modalInfo">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Informacion</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p id="txtInfo">Error al introducir</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning" onclick=toggleForm()>Atrás</button></div>
+                </div>
+            </div>
+        
+        <div class="container" id="divFormu">
+            <div class="container" id="idCreate">
+                <form>
+                    <div class="form-group row">
+                        <label for="paises" class="col-sm-2 col-form-label col-form-label-lg">Paises</label>
+                        <div class="col-sm-2">
+                            <select class="form-control form-control-lg" id="pais">
+                        </select>
+                        </div>
+                        <label for="poblacion" class="col-sm-2 col-form-label col-form-label-lg">Poblacion</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control form-control-lg" id="poblacion" placeholder="100000">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="lugar" class="col-sm-2 col-form-label col-form-label-lg">Lugar</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control form-control-lg" id="lugar" placeholder="Villanueva del trabuco">
+                        </div>
+                        <label for="latitud" class="col-sm-2 col-form-label col-form-label-lg">Latitud</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control form-control-lg" id="latitud" placeholder="36">
+                        </div>
+                        <label for="longitud" class="col-sm-2 col-form-label col-form-label-lg">Longitud</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control form-control-lg" id="longitud" placeholder="36">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <button type="button" class="btn btn-warning" id="butCreate" onclick="createPoblacion()">Crear</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="container" id="idFind">
+                <form>
+                    <div class="form-group row">
+                        <label for="fpaises" class="col-sm-2 col-form-label col-form-label-lg">Paises</label>
+                        <div class="col-sm-2">
+                            <select class="form-control form-control-lg" onfocus="findPoblacion()" id="fpaises">
+                                    <option>Large select</option>
+                                </select>
+                        </div>
+                        <label for="flugar" class="col-sm-2 col-form-label col-form-label-lg">Lugar</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control form-control-lg" id="flugar" placeholder="Villanueva del trabuco" onfocus="findPoblacion()">
+                        </div>
+                        <label for="fpoblacion" class="col-sm-2 col-form-label col-form-label-lg">Poblacion</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control form-control-lg" id="fpoblacion" placeholder="100000" onfocus="findPoblacion()">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="container" id="divDatos">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Lugar</th>
+                            <th>Pais</th>
+                            <th>Poblacion</th>
+                            <th>Latitud</th>
+                            <th>Longitud</th>
+                        </tr>
+                    </thead>
+                    <tbody id="idBodyTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+</body>
+<script>
+    const formu = new Object();
+
+    function createPoblacion() {
+
+        formu.pais = pais.value;
+        formu.poblacion = poblacion.value;
+        formu.lugar = lugar.value;
+        formu.latitud = latitud.value;
+        formu.longitud = longitud.value;
+        let data = JSON.stringify(formu);
+        $.ajax({
+            type: "POST",
+            data: {
+                "accion": "createPoblacion",
+                "data": data
+            },
+            url: "crudPoblaciones.php",
+            success: function (data) {
+                var respuesta = JSON.parse(data);
+                console.log(data);
+                clean();
+                toggleForm();
+            }
+        });
+    }
+
+    function findPoblacion() {
+        formu.pais = fpaises.value;
+        formu.lugar = flugar.value;
+        formu.poblacion = fpoblacion.value;
+        let data = JSON.stringify(formu);
+        $.ajax({
+            type: "POST",
+            data: {
+                "accion": "findPoblacion",
+                "data": data
+            },
+            url: "crudPoblaciones.php",
+            success: function (data) {
+                var respuesta = JSON.parse(data);
+                console.log(data);
+                clean();
+            }
+        });
+    }
+
+    function clean() {
+        formu.pais = "";
+        formu.poblacion = "";
+        formu.lugar = "";
+        formu.latitud = "";
+        formu.longitud = "";
+    }
+
+    function toggleForm() {
+        if ($("#divFormu").is(':visible')) {
+            console.log("gola")
+            $("#divFormu").hide('slow');
+            $("#modalInfo").css('display','block');
+        } else {
+            $("#divFormu").show('slow');
+            $("#modalInfo").css('display','none');
+        }
+    }
+    function createOption(data){
+        html="";
+        for(let i=0;i<data.length;i++){
+            html+='<option value='+data[i]+'>'+data[i]+'</option>';
+        }
+        $("#pais").html(html);
+        
+    }
+    /*
+    ALTER TABLE LUGARES PARTITION BY RANGE(ASCII(substring(pais,1,1)))(
+        partition pA values less than (ASCII(66)),
+        partition pB values less than (ASCII(67)),
+        partition pC values less than (ASCII(68)),
+        partition pD values less than (ASCII(69)),
+        partition pE values less than (ASCII(70)),
+        partition pF values less than (ASCII(71)),
+        partition pG values less than (ASCII(72)),
+        partition pH values less than (ASCII(73)),
+        partition pI values less than (ASCII(74)), 
+        partition pJ values less than (ASCII(75)),
+        partition pK values less than (ASCII(76)),
+        partition pL values less than (ASCII(77)),
+        partition pM values less than (ASCII(78)),
+        partition pN values less than (ASCII(79)),
+        partition pO values less than (ASCII(80)),
+        partition pP values less than (ASCII(81)),
+        partition pQ values less than (ASCII(82)),
+        partition pR values less than (ASCII(83)),
+        partition pS values less than (ASCII(84)),
+        partition pT values less than (ASCII(85)),
+        partition pU values less than (ASCII(86)),
+        partition pV values less than (ASCII(87)),
+        partition pW values less than (ASCII(88)),
+        partition pX values less than (ASCII(89)),
+        partition pY values less than (ASCII(90)),
+        partition pDefault values less than (ASCII(91))
+
+    )
+
+
+
+    */
+</script>
+
 </html>
