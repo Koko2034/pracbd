@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,11 +9,11 @@
     <link rel="stylesheet" href="../css/structure.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script type="text/javascript" src="../js/jquery-3.1.0.min.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB7SiNPE9bdi9QjxCn-HvHhmj0pbmxd7Uc">    </script>
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB7SiNPE9bdi9QjxCn-HvHhmj0pbmxd7Uc">
+    </script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
-    
+
     <script>
         $.ajax({
             type: "POST",
@@ -27,14 +26,12 @@
                 createOption(respuesta.paises);
             }
         });
-
     </script>
     <style>
         html,
         body,
         header {
             width: 100%;
-            
         }
 
         header {
@@ -52,35 +49,42 @@
         #modalInfo {
             display: none;
         }
-        #txtInfo,#txtInfoSubject{
-            color:black
+
+        #txtInfo,
+        #txtInfoSubject {
+            color: black
         }
-      .table-striped>tbody>tr:nth-of-type(odd) {
-        color: black;
-    }
-    .table-striped>tbody>tr:nth-of-type(even) {
-        background-color: lightgray;
-    }
-.table{
-    border: 4px solid orange;
-    
-}
-thead,tfoot{
-    background-color: darkgray;
-}
-.centrado{
-    margin:0 auto;
-    text-align: center;
-}
+
+        .table-striped>tbody>tr:nth-of-type(odd) {
+            color: black;
+        }
+
+        .table-striped>tbody>tr:nth-of-type(even) {
+            background-color: lightgray;
+        }
+
+        .table {
+            border: 4px solid black;
+        }
+
+        thead,
+        tfoot {
+            background-color: darkgray;
+            color: white;
+        }
+
+        .centrado {
+            margin: 0 auto;
+            text-align: center;
+        }
+        .hide-close .ui-dialog-titlebar-close { display: none }
+
     </style>
-
 </head>
-
 
 <body>
     <header><em>Práctica Acceso15: BBDD Países del mundo</em></header>
     <main>
-
         <div class="modal-dialog" role="document" id="modalInfo">
             <div class="modal-content">
                 <div class="modal-header">
@@ -93,113 +97,103 @@ thead,tfoot{
                     <button type="button" class="btn btn-warning" onclick=toggleForm()>Atrás</button></div>
             </div>
         </div>
-
         <div class="container" id="divFormu">
             <div class="container" id="idCreate">
                 <form>
                     <fieldset>
                         <legend>Introduce un país</legend>
-                    <div class="form-group row">
-                        <label for="paises" class="col-sm-2 col-form-label col-form-label-lg">País:</label>
-                        <div class="col-sm-2">
-                            <select class="form-control form-control-lg" id="pais">
+                        <div class="form-group row">
+                            <label for="paises" class="col-sm-2 col-form-label col-form-label-lg">País:</label>
+                            <div class="col-sm-2">
+                                <select class="form-control form-control-lg" id="pais">
                         </select>
+                            </div>
+                            <label for="poblacion" class="col-sm-2 col-form-label col-form-label-lg">Población:</label>
+                            <div class="col-sm-2">
+                                <input type="number" class="form-control form-control-lg" id="poblacion" placeholder="Introduz Num Habit" min=0>
+                            </div>
                         </div>
-                        <label for="poblacion" class="col-sm-2 col-form-label col-form-label-lg">Población:</label>
-                        <div class="col-sm-2">
-                            <input type="number" class="form-control form-control-lg" id="poblacion" placeholder="Introduz Num Habit" min=0>
+                        <div class="form-group row">
+                            <label for="lugar" class="col-sm-2 col-form-label col-form-label-lg">Lugar:</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control form-control-lg" id="lugar" placeholder="Introduzca Población" onblur="getLatLon(this.value)">
+                            </div>
+                            <label for="latitud" class="col-sm-2 col-form-label col-form-label-lg">Latitud:</label>
+                            <div class="col-sm-2">
+                                <input type="number" class="form-control form-control-lg" id="latitud" placeholder="Latitud" readonly>
+                            </div>
+                            <label for="longitud" class="col-sm-2 col-form-label col-form-label-lg">Longitud:</label>
+                            <div class="col-sm-2">
+                                <input type="number" class="form-control form-control-lg" id="longitud" placeholder="Longitud" readonly>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="lugar" class="col-sm-2 col-form-label col-form-label-lg">Lugar:</label>
-                        <div class="col-sm-2">
-                            <input type="text" class="form-control form-control-lg" id="lugar" placeholder="Introduzca Poblacion" onblur="getLatLon(this.value)">
-                        </div>
-                        <label for="latitud" class="col-sm-2 col-form-label col-form-label-lg">Latitud:</label>
-                        <div class="col-sm-2">
-                            <input type="text" class="form-control form-control-lg" id="latitud" placeholder="Latitud" readonly>
-                        </div>
-                        <label for="longitud" class="col-sm-2 col-form-label col-form-label-lg">Longitud:</label>
-                        <div class="col-sm-2">
-                            <input type="text" class="form-control form-control-lg" id="longitud" placeholder="longitud" readonly>
-                        </div>
-                        
-                    </div>
-                    <div class="form-group row">
+                        <div class="form-group row">
                             <div class="col-sm-12 centrado">
-                                    <button type="button" class="col-sm-2 btn btn-warning" id="butCreate" onclick="createPoblacion()" disabled>Crear</button>
-                                </div>
-                    </div>
-                </fieldset>
+                                <button type="button" class="col-sm-2 btn btn-warning" id="butCreate" onclick="createPoblacion()" disabled>Crear</button>
+                            </div>
+                        </div>
+                    </fieldset>
                 </form>
             </div>
-
             <div class="container" id="idFind">
                 <form>
                     <fieldset>
                         <legend>Filtra países</legend>
-                            <div class="form-group row">
-                                    <label for="fpaises" class="col-sm-2 col-form-label col-form-label-lg">País</label>
-                                    <div class="col-sm-2">
-                                        <select class="form-control form-control-lg" onchange="findPoblacion()" id="fpaises">
+                        <div class="form-group row">
+                            <label for="fpaises" class="col-sm-2 col-form-label col-form-label-lg">País</label>
+                            <div class="col-sm-2">
+                                <select class="form-control form-control-lg" onchange="findPoblacion()" id="fpaises">
                                                 <option>Large select</option>
                                             </select>
-                                    </div>
-                                    <label for="flugar" class="col-sm-2 col-form-label col-form-label-lg">Lugar</label>
-                                    <div class="col-sm-2">
-                                        <input type="text" class="form-control form-control-lg" id="flugar" placeholder="Introduzca Poblacion" onblur="findPoblacion()">
-                                    </div>
-                                    <label for="fpoblacion" class="col-sm-2 col-form-label col-form-label-lg">Población</label>
-                                    <div class="col-sm-2">
-                                        <input type="number" class="form-control form-control-lg" id="fpoblacion" placeholder="Introduz Num Habit" onblur="findPoblacion()">
-                                    </div>
-                                </div>
-
+                            </div>
+                            <label for="flugar" class="col-sm-2 col-form-label col-form-label-lg">Lugar</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control form-control-lg" id="flugar" placeholder="Introduzca Poblacion" onblur="findPoblacion()">
+                            </div>
+                            <label for="fpoblacion" class="col-sm-2 col-form-label col-form-label-lg">Población</label>
+                            <div class="col-sm-2">
+                                <input type="number" class="form-control form-control-lg" id="fpoblacion" placeholder="Introduz Num Habit" onblur="findPoblacion()">
+                            </div>
+                        </div>
                     </fieldset>
-                    
                 </form>
             </div>
-            <div id="dialog" title="Basic dialog">
-                
-              </div>
+            <div id="dialog" title="Información del Borrado">
+            </div>
             <div class="container" id="divDatos">
                 <fieldset>
                     <legend>Resultados de la búsqueda</legend>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Lugar</th>
-                            <th>Pais</th>
-                            <th>Poblacion</th>
-                            <th>Latitud</th>
-                            <th>Longitud</th>
-                        </tr>
-                    </thead>
-                    <tbody id="idBodyTable"></tbody>
-                   
-                </table>
-            </fieldset>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Lugar</th>
+                                <th>Pais</th>
+                                <th>Poblacion</th>
+                                <th>Latitud</th>
+                                <th>Longitud</th>
+                            </tr>
+                        </thead>
+                        <tbody id="idBodyTable"></tbody>
+                    </table>
+                </fieldset>
             </div>
         </div>
     </main>
-
 </body>
 <script>
     const formu = new Object();
     var tempo = 0;
-    var lugarBorrado="";
-    function createPoblacion() {
 
+    function createPoblacion() {
         formu.PAIS = pais.value;
         formu.LUGAR = sanity(lugar.value);
         formu.LUGARCT = lugar.value;
         formu.POBLACION = poblacion.value;
         formu.LAT = latitud.value;
         formu.LON = longitud.value;
-      
         let data = JSON.stringify(formu);
-       $.ajax({
+        $.ajax({
             type: "POST",
             data: {
                 "accion": "createPoblacion",
@@ -210,19 +204,20 @@ thead,tfoot{
                 var respuesta = JSON.parse(data);
                 console.log(respuesta.status);
                 console.log(respuesta.debug);
-                respuesta.status = "OK"? html = "Introducido correctamente":"Error al introducirlo";
+                respuesta.status = "OK" ? html = "Introducido correctamente" : "Error al introducirlo";
                 $("#txtInfo").html(html);
                 clean();
                 toggleForm();
             }
         });
     }
+
     function findPoblacion() {
         formu.PAIS = fpaises.value;
         formu.LUGAR = sanity(flugar.value);
         formu.POBLACION = fpoblacion.value;
         let data = JSON.stringify(formu);
-         $.ajax({
+        $.ajax({
             type: "POST",
             data: {
                 "accion": "findPoblacion",
@@ -231,20 +226,25 @@ thead,tfoot{
             url: "crudPoblaciones.php",
             success: function (data) {
                 var respuesta = JSON.parse(data);
-               
-            createTable(respuesta.result);
+                createTable(respuesta.result);
                 clean();
             }
         });
     }
+
     function clean() {
         formu.PAIS = "";
         formu.POBLACION = "";
         formu.LUGAR = "";
         formu.LUGARCT = "";
         formu.LAT = "";
-        formu.LON ="";
+        formu.LON = "";
+        poblacion.value = "";
+        lugar.value = "";
+        latitud.value = "";
+        longitud.value = "";
     }
+
     function toggleForm() {
         if ($("#divFormu").is(':visible')) {
             $("#divFormu").hide('slow');
@@ -254,6 +254,7 @@ thead,tfoot{
             $("#modalInfo").css('display', 'none');
         }
     }
+
     function createOption(data) {
         html = "";
         data.sort();
@@ -262,17 +263,22 @@ thead,tfoot{
         }
         $("#pais").html(html);
         $("#fpaises").html(html);
+    }
 
-    }
-    function createTable(data){
+    function createTable(data) {
         let html = "";
-        for(k in data){
-            html +='<tr id="'+data[k].ID+'" onmouseover="temporizador(this.id)" onmouseout="limpiar()"><th scope="row">'+data[k].ID+'</th><td>'+data[k].lugar+'</td><td>'+data[k].pais+'</td><td>'+data[k].poblacion+'</td><td>'+data[k].latitud+'</td><td>'+data[k].longitud+'</td></tr>';
+        for (k in data) {
+            html += '<tr id="' + data[k].lugar +
+                '" onmouseover="temporizador(this.id)" onmouseout="limpiar()"><th scope="row">' + (parseInt(k) + 1) +
+                '</th><td>' + data[k].lugar + '</td><td>' + data[k].pais + '</td><td>' + data[k].poblacion +
+                '</td><td>' + data[k].latitud + '</td><td>' + data[k].longitud + '</td></tr>';
         }
-       // html +=' <tfoot><tr><th></th><th>Lugar</th><th>Pais</th><th>Poblacion</th><th>Latitud</th><th>Longitud</th></tr></tfoot>';
         $('#idBodyTable').html(html);
-        $('#idBodyTable').add('<tfoot><tr><th></th><th>Lugar</th><th>Pais</th><th>Poblacion</th><th>Latitud</th><th>Longitud</th></tr></tfoot>');
+        $('#idBodyTable').add(
+            '<tfoot><tr><th></th><th>Lugar</th><th>Pais</th><th>Poblacion</th><th>Latitud</th><th>Longitud</th></tr></tfoot>'
+        );
     }
+
     function sanity(cadena) {
         cadena = cadena.replace(/á/gi, "a");
         cadena = cadena.replace(/é/gi, "e");
@@ -283,81 +289,84 @@ thead,tfoot{
         cadena = cadena.toLowerCase();
         return cadena;
     }
+
     function getLatLon(address) {
-        var geocoder = new google.maps.Geocoder().geocode({'address':address},function(results, status) {
-          if (status === 'OK') {
-            $('#latitud').val(results[0].geometry.location.lat());
-            $('#longitud').val(results[0].geometry.location.lng());
-            $('#butCreate').prop('disabled', false);
-          }
-          else{
-            console.log("FAIL");
-          }
+        var geocoder = new google.maps.Geocoder().geocode({
+            'address': address
+        }, function (results, status) {
+            if (status === 'OK') {
+                $('#latitud').val(results[0].geometry.location.lat());
+                $('#longitud').val(results[0].geometry.location.lng());
+                $('#butCreate').prop('disabled', false);
+            } else {
+                console.log("FAIL");
+            }
         });
     }
-    function temporizador(id){
-        tempo=0;
-         if(tempo==0){
-             lugarBorrado = id;
-          setTimeout(disparador,0);
-        }  
+
+    function temporizador(id) {
+        tempo = 0;
+        if (tempo == 0) {
+            formu.LUGAR = id;
+            formu.PAIS = $('#fpaises').val();
+            setTimeout(disparador, 0);
+        }
     }
-    function disparador(){
+
+    function disparador() {
         tempo++;
-        if(tempo<4){
-            setTimeout(disparador,2000);
-        }else if(tempo==4){
+        if (tempo < 4) {
+            setTimeout(disparador, 2000);
+        } else if (tempo == 4) {
             limpiar();
             dialog();
-        }else{
+        } else {
             limpiar();
         }
     }
-    function dialog(){
-        $('#dialog').html("Desea Borrar la fila marcada con ID: "+lugarBorrado);
+
+    function dialog() {
+        $('#dialog').html("Desea Borrar la fila marcada con la ciudad: " + formu.LUGAR);
         $('#dialog').dialog({
-            width:400,
-            height:"auto",
+            width: 400,
+            height: "auto",
             resizable: false,
-            modal:true,
-            buttons:{
-                "Borrar": function(){
+            modal: true,
+            dialogClass:'hide-close',
+            buttons: {
+                "Borrar": function () {
                     deleteRow();
                     $(this).dialog("close");
                 },
-                "Cancel": function(){
+                "Cancel": function () {
                     $(this).dialog("close");
                 }
             }
         })
-
     }
-    function deleteRow(){
-        let data = JSON.stringify(lugarBorrado);
-        /*$.ajax({
+
+    function deleteRow() {
+        let data = JSON.stringify(formu);
+        $.ajax({
             type: "POST",
             data: {
                 "accion": "deletePoblacion",
-                "lugar": data
+                "data": data
             },
             url: "crudPoblaciones.php",
             success: function (data) {
                 var respuesta = JSON.parse(data);
-                console.log(respuesta.status);
-                console.log(respuesta.debug);
-                findPoblacion();    
+                formu.PAIS = "";
+                formu.LUGAR = "";
+                findPoblacion();
             }
-        });*/
-        console.log("deleteRow");
+        });
     }
-    function limpiar(){
-        tempo=5;
+
+    function limpiar() {
+        tempo = 5;
     }
-    
     /*
-    
-   
-    
     ALTER TABLE LUGARES PARTITION BY RANGE(ASCII(substring(pais,1,1)))(
         partition pA values less than (ASCII(66)),
         partition pB values less than (ASCII(67)),
@@ -385,11 +394,7 @@ thead,tfoot{
         partition pX values less than (ASCII(89)),
         partition pY values less than (ASCII(90)),
         partition pDefault values less than (ASCII(91))
-
     )
-
-
-
     */
 </script>
 

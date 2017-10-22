@@ -498,16 +498,19 @@ $countriesAcro = array(
 );
 $data = json_decode($_POST['data'], true);
 $accion = $_POST['accion'];
-$lugar = $data['lugar'];
+$lugar = $data['LUGAR'];
+$pais =$data['PAIS'];
 
 if($accion === "findPoblacion"){
     foreach($data as $key => $value){
-        if($key==="PAIS"){
-            $value=strtolower($countriesAcro[$value]);
-        }
-         if($value!=""){
-            is_numeric($value)?$query.=" AND $key>=$value":$query.=" AND $key LIKE '$value%'";
-         }
+        if($value!=null){
+            if($key==="PAIS"){
+                $value=strtolower($countriesAcro[$value]);
+            }
+             if($value!=""){
+                is_numeric($value)?$query.=" AND $key>=$value":$query.=" AND $key LIKE '$value%'";
+             }
+        } 
     }
     $query.=" LIMIT 15";
     $stmt = $oConni->prepare("SELECT PAIS,LUGAR,POBLACION,LAT,LON,ID FROM LUGARES WHERE 1=1 ".$query.";");
@@ -535,11 +538,13 @@ if($accion === "findPoblacion"){
 }
 if($accion === "createPoblacion"){
     foreach($data as $key => $value){
-        if($key==="pais"){
-            $value=strtolower($countriesAcro[$value]);
-        }
-        $campos.=",".$key;
-        is_numeric($value)? $values.=",".$value:$values.=",'".$value."'";
+        if($value!=null){
+            if($key==="PAIS"){
+                $value=strtolower($countriesAcro[$value]);
+            }
+            $campos.=",".$key;
+            is_numeric($value)? $values.=",".$value:$values.=",'".$value."'";
+        } 
     }
     $campos = "(ID".$campos.")";
     $values = "(null".$values.")";
@@ -570,9 +575,8 @@ if($accion === "obtenerPaises"){
     echo json_encode(array("status"=>"ok","paises"=>$paises));
 }
 if($accion === "deletePoblacion"){
-    
-    $stmt = $oConni->prepare("DELETE FROM LUGARES WHERE ID = ? ;");
-    $stmt->bind_param('s',$lugar);
+    $stmt = $oConni->prepare("DELETE FROM LUGARES WHERE LUGAR in ? AND PAIS = ? ;");
+    $stmt->bind_param('ss',$lugar,$countriesAcro[$pais]);
     $stmt->execute();
     $status = "OK";
     $debug = $stmt->errno . " " . $stmt->error;
@@ -580,5 +584,4 @@ if($accion === "deletePoblacion"){
         $status="KO"; 
     }
     echo json_encode(array("status"=>$status,"debug"=>$debug));
-   
 }
